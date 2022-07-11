@@ -14,8 +14,8 @@ library(tidyselect)
 library(extrafont)
 library(recipes)
 library(caret)
-# devtools::load_all("/Users/yunpeng/yunkepeng/rbeni/") ## XXX doesn't work across platforms
-library(rbeni)
+devtools::load_all("/Users/yunpeng/yunkepeng/rbeni/") ## worked in Yunke's desktop
+#library(rbeni) # worked in Euler or other users
 library(raster)
 library(maps)
 library(rworldmap)
@@ -2551,8 +2551,6 @@ a9 <- ~{
   p1a <- visreg(anpp_tnpp_model,"obs_age_a",type="contrast")
   plot(p1a,ylab="logit ANPP/BP",xlab="ln age",
        cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)}
-
-
 
 plot_grid(a1,a2,a3,a4,a5,
           a6,a7,a8,a9,white,
