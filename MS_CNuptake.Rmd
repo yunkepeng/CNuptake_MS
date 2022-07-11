@@ -1275,13 +1275,15 @@ CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 #cdo -O timmean a1.nc ISAM_S2_fNup_ANN_mean.nc
 
 ISAM_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_fNup_ANN_mean.nc"), varnam = "fNup"))
-ISAM_fNup$myvar<- ISAM_fNup$myvar*1000*31556952
+
+# XXX what are these numbers that you multiply here?
+ISAM_fNup$myvar<- ISAM_fNup$fNup*1000*31556952
 
 ISAM_gpp <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
-ISAM_gpp$myvar<- ISAM_gpp$myvar*1000*31556952
+ISAM_gpp$myvar<- ISAM_gpp$gpp*1000*31556952
 
 ISAM_npp <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_npp_ANN_mean.nc"), varnam = "npp"))
-ISAM_npp$myvar<- ISAM_npp$myvar*1000*31556952
+ISAM_npp$myvar<- ISAM_npp$npp*1000*31556952
 
 #ISBA
 ncin <- nc_open("~/data/trendy/v8/ISBA-CTRIP_S2_gpp_ANN_mean.nc")
@@ -1305,7 +1307,7 @@ names(ISBA_NPP) <- c("lon","lat","NPP")
 JSBACH_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/JSBACH_S2_fNup_ANN_mean.nc"), varnam = "fNup"))
 JSBACH_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/JSBACH_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
 JSBACH_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/JSBACH_S2_npp_ANN_mean.nc"), varnam = "npp"))
-plot_map3(na.omit(JSBACH_fNup[,c("lon","lat","myvar")]),varnam = "myvar",latmin = -65, latmax = 85)
+plot_map3(na.omit(JSBACH_fNup[,c("lon","lat","fNup")]),varnam = "fNup",latmin = -65, latmax = 85)
 
 #JULES
 # data from output/JULES-ES-1.0/JULES-ES.1p0.vn5.4.50.CRUJRA2.TRENDYv8.365.S2_Monthly_npp.nc
