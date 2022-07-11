@@ -927,9 +927,14 @@ summary(grass_percent + forest_percent) # check - their sum = 1, perfect!
 
 ###3. calculate weighted-sum
 #firstly - filter na points - so that all output map has same numbers of NA.
-all_predictors <- as.data.frame(cbind(Tg$myvar,PPFD$myvar,vpd$myvar,
-                                      fAPAR$myvar,age$myvar,
-                                      CNrt$myvar,LMA$myvar,vcmax25_df$myvar))
+# all_predictors <- as.data.frame(cbind(Tg$Tg,PPFD$PPFD,vpd$vpd,
+#                                       fAPAR$fAPAR,age$age,
+#                                       CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25))
+
+all_predictors <- as.data.frame(cbind(Tg$Tg, PPFD$PPFD, vpd$vpd,
+                                      fAPAR$fAPAR, age$age,
+                                      CNrt$CNrt, LMA$LMA, vcmax25_df$vcmax25 ))
+
 all_predictors$available_grid = rowMeans(all_predictors)
 #just to find all na columns
 all_predictors$available_grid[is.na(all_predictors$available_grid)==FALSE] <- 1
@@ -948,11 +953,11 @@ summary(all_predictors)
 #bp_model,anpp_tnpp_model,anpp_leafnpp_model,bp_grass_model,0.49/0.51,n1,nre_model
 
 npp_f <- summary(bp_model)$coefficients[1,1] +  
-  summary(bp_model)$coefficients[2,1] * Tg$myvar +
-  summary(bp_model)$coefficients[3,1] * fAPAR$myvar +
-  summary(bp_model)$coefficients[4,1] * log(PPFD$myvar) +
-  summary(bp_model)$coefficients[5,1] * log(CNrt$myvar)+
-  summary(bp_model)$coefficients[6,1] * log(age$myvar)
+  summary(bp_model)$coefficients[2,1] * Tg$Tg +
+  summary(bp_model)$coefficients[3,1] * fAPAR$fAPAR +
+  summary(bp_model)$coefficients[4,1] * log(PPFD$PPFD) +
+  summary(bp_model)$coefficients[5,1] * log(CNrt$CNrt)+
+  summary(bp_model)$coefficients[6,1] * log(age$age)
 
 #show npp<=0 points - high lat!
 #newmap <- getMap(resolution = "low")
@@ -967,26 +972,26 @@ npp_f[npp_f<=0] <- NA
 
 anpp_f <- npp_f * 
   (1/(1 + exp(-(summary(anpp_tnpp_model)$coefficients[1,1]+
-                  summary(anpp_tnpp_model)$coefficients[2,1] * log(CNrt$myvar) +
-                  summary(anpp_tnpp_model)$coefficients[3,1] * log(PPFD$myvar) + 
-                  summary(anpp_tnpp_model)$coefficients[4,1] * Tg$myvar+
-                  summary(anpp_tnpp_model)$coefficients[5,1] * log(age$myvar)))))
+                  summary(anpp_tnpp_model)$coefficients[2,1] * log(CNrt$CNrt) +
+                  summary(anpp_tnpp_model)$coefficients[3,1] * log(PPFD$PPFD) + 
+                  summary(anpp_tnpp_model)$coefficients[4,1] * Tg$Tg+
+                  summary(anpp_tnpp_model)$coefficients[5,1] * log(age$age)))))
 
 bnpp_f <- npp_f - anpp_f
 
 lnpp_f <- anpp_f * (1/(1 + exp(-(summary(anpp_leafnpp_model)$coefficients[1,1]+
-                                   summary(anpp_leafnpp_model)$coefficients[2,1]* fAPAR$myvar +
-                                   summary(anpp_leafnpp_model)$coefficients[3,1] * log(vpd$myvar) + 
-                                   summary(anpp_leafnpp_model)$coefficients[4,1] * log(PPFD$myvar)))))
+                                   summary(anpp_leafnpp_model)$coefficients[2,1]* fAPAR$fAPAR +
+                                   summary(anpp_leafnpp_model)$coefficients[3,1] * log(vpd$vpd) + 
+                                   summary(anpp_leafnpp_model)$coefficients[4,1] * log(PPFD$PPFD)))))
 
 wnpp_f <- anpp_f - lnpp_f
 
 leafnc_f <- (summary(n1)$coefficients[1,1]/0.47) + 
-  (summary(n1)$coefficients[2,1]/0.47) * vcmax25_df$myvar/LMA$myvar
+  (summary(n1)$coefficients[2,1]/0.47) * vcmax25_df$vcmax25/LMA$LMA
 
 nre_f <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
-                       summary(nre_model)$coefficients[2,1] *Tg$myvar +
-                       summary(nre_model)$coefficients[3,1] * log(vpd$myvar)))))
+                       summary(nre_model)$coefficients[2,1] *Tg$Tg +
+                       summary(nre_model)$coefficients[3,1] * log(vpd$vpd)))))
 
 lnf_f <- (1-nre_f)* leafnc_f * lnpp_f
 wnf_f <- wnpp_f/100
@@ -996,7 +1001,7 @@ bnf_f <- bnpp_f/94
 nuptake_f <- lnf_f + wnf_f + bnf_f
 
 #LMG test in forest
-df_all <- (as.data.frame(cbind(nuptake_f,npp_f,all_predictors)))
+df_all <- (as.data.frame(cbind(nuptake_f, npp_f, all_predictors)))
 df_all$nue <- df_all$npp_f/df_all$nuptake_f
 
 #key conponents
@@ -1023,8 +1028,8 @@ calc.relimp(gpa.model, rela=TRUE)
 
 #grass
 npp_g <- summary(bp_grass_model)$coefficients[1,1] +  
-  summary(bp_grass_model)$coefficients[2,1] * log(PPFD$myvar) +
-  summary(bp_grass_model)$coefficients[3,1] * Tg$myvar 
+  summary(bp_grass_model)$coefficients[2,1] * log(PPFD$PPFD) +
+  summary(bp_grass_model)$coefficients[3,1] * Tg$Tg 
 
 #show npp<=0 points - high lat!
 #newmap <- getMap(resolution = "low")
@@ -1302,6 +1307,7 @@ a14 <- gg$gglegend+labs(title = ~paste("gN m"^-2,"yr"^-1))+ white
 #work on effect of each factor on NUE
 #now, work on NUE
 nue_final <- all_maps$NUE # by default
+
 cal_nue <- function(Tg_pred,PPFD_pred,vpd_pred,fAPAR_pred,age_pred,CNrt_pred,LMA_pred,vcmax25_pred){
   npp_f <- summary(bp_model)$coefficients[1,1] +  
     summary(bp_model)$coefficients[2,1] * Tg_pred +
@@ -1408,27 +1414,27 @@ cal_nue <- function(Tg_pred,PPFD_pred,vpd_pred,fAPAR_pred,age_pred,CNrt_pred,LMA
   return(nue_pft_ratio)
 }
 
-nue_standard <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,fAPAR$myvar,
-                        age$myvar,CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
+nue_standard <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,
+                        age$age,CNrt$CNrt,LMA$LMA,vcmax25_df$vcmax25)
 summary(nue_standard)
 
-mean_Tg <- mean(Tg$myvar[is.na(available_grid2)==FALSE]);mean_Tg
-mean_PPFD <- mean(PPFD$myvar[is.na(available_grid2)==FALSE]);mean_PPFD
-mean_vpd <- mean(vpd$myvar[is.na(available_grid2)==FALSE]);mean_vpd
-mean_fAPAR <- mean(fAPAR$myvar[is.na(available_grid2)==FALSE]);mean_fAPAR
-mean_age <- mean(age$myvar[is.na(available_grid2)==FALSE]);mean_age
+mean_Tg <- mean(Tg$Tg[is.na(available_grid2)==FALSE]);mean_Tg
+mean_PPFD <- mean(PPFD$PPFD[is.na(available_grid2)==FALSE]);mean_PPFD
+mean_vpd <- mean(vpd$vpd[is.na(available_grid2)==FALSE]);mean_vpd
+mean_fAPAR <- mean(fAPAR$fAPAR[is.na(available_grid2)==FALSE]);mean_fAPAR
+mean_age <- mean(age$age[is.na(available_grid2)==FALSE]);mean_age
 mean_CNrt <- mean(CNrt$myvar[is.na(available_grid2)==FALSE]);mean_CNrt
-mean_LMA <- mean(LMA$myvar[is.na(available_grid2)==FALSE]);mean_LMA
-mean_vcmax25 <- mean(vcmax25_df$myvar[is.na(available_grid2)==FALSE]);mean_vcmax25
+mean_LMA <- mean(LMA$LMA[is.na(available_grid2)==FALSE]);mean_LMA
+mean_vcmax25 <- mean(vcmax25_df$vcmax25[is.na(available_grid2)==FALSE]);mean_vcmax25
 
-nue_Tg <- cal_nue(rep(mean_Tg,259200),PPFD$myvar,vpd$myvar,fAPAR$myvar,age$myvar,CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
-nue_PPFD <- cal_nue(Tg$myvar,rep(mean_PPFD,259200),vpd$myvar,fAPAR$myvar,age$myvar,CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
-nue_vpd <- cal_nue(Tg$myvar,PPFD$myvar,rep(mean_vpd,259200),fAPAR$myvar,age$myvar,CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
-nue_fAPAR <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,rep(mean_fAPAR,259200),age$myvar,CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
-nue_age <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,fAPAR$myvar,rep(mean_age,259200),CNrt$myvar,LMA$myvar,vcmax25_df$myvar)
-nue_CNrt <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,fAPAR$myvar,age$myvar,rep(mean_CNrt,259200),LMA$myvar,vcmax25_df$myvar)
-nue_LMA <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,fAPAR$myvar,age$myvar,CNrt$myvar,rep(mean_LMA,259200),vcmax25_df$myvar)
-nue_vcmax25 <- cal_nue(Tg$myvar,PPFD$myvar,vpd$myvar,fAPAR$myvar,age$myvar,CNrt$myvar,LMA$myvar,rep(mean_vcmax25,259200))
+nue_Tg <- cal_nue(rep(mean_Tg,259200),PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,age$age,CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25)
+nue_PPFD <- cal_nue(Tg$Tg,rep(mean_PPFD,259200),vpd$vpd,fAPAR$fAPAR,age$age,CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25)
+nue_vpd <- cal_nue(Tg$Tg,PPFD$PPFD,rep(mean_vpd,259200),fAPAR$fAPAR,age$age,CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25)
+nue_fAPAR <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,rep(mean_fAPAR,259200),age$age,CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25)
+nue_age <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,rep(mean_age,259200),CNrt$myvar,LMA$LMA,vcmax25_df$vcmax25)
+nue_CNrt <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,age$age,rep(mean_CNrt,259200),LMA$LMA,vcmax25_df$vcmax25)
+nue_LMA <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,age$age,CNrt$myvar,rep(mean_LMA,259200),vcmax25_df$vcmax25)
+nue_vcmax25 <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,age$age,CNrt$myvar,LMA$LMA,rep(mean_vcmax25,259200))
 
 nue_all <- as.data.frame(cbind(all_predictors,nue_Tg,nue_PPFD,nue_vpd,nue_fAPAR,nue_age,nue_CNrt,nue_LMA,nue_vcmax25))
 summary(nue_all)
@@ -2377,9 +2383,9 @@ uncertainty_npp_grassland <- summary(bp_grass_model)$sigma
 mod_anpp_uncertainty <- summary(anpp_tnpp_model)$sigma
 anpp_b <- summary(anpp_tnpp_model)$coefficients[1,1]+
   summary(anpp_tnpp_model)$coefficients[2,1] * log(CNrt$myvar) +
-  summary(anpp_tnpp_model)$coefficients[3,1] * log(PPFD$myvar) + 
-  summary(anpp_tnpp_model)$coefficients[4,1] * Tg$myvar+
-  summary(anpp_tnpp_model)$coefficients[5,1] * log(age$myvar)
+  summary(anpp_tnpp_model)$coefficients[3,1] * log(PPFD$PPFD) + 
+  summary(anpp_tnpp_model)$coefficients[4,1] * Tg$Tg+
+  summary(anpp_tnpp_model)$coefficients[5,1] * log(age$age)
 
 #deriative a (the ratio) = deriative b (the regression) * deriative a / deriative b
 mod_anpp_uncertainty <- mod_anpp_uncertainty *  exp(-anpp_b) / ( (1 + exp(-anpp_b)) ^2)
@@ -2395,9 +2401,9 @@ summary(uncertainty_bnpp/bnpp_f)
 ## Uncertainty of LNPP/ANPP
 mod_lnpp_uncertainty <- summary(anpp_leafnpp_model)$sigma
 lnpp_b <- summary(anpp_leafnpp_model)$coefficients[1,1]+
-  summary(anpp_leafnpp_model)$coefficients[2,1]* fAPAR$myvar +
-  summary(anpp_leafnpp_model)$coefficients[3,1] * log(vpd$myvar) + 
-  summary(anpp_leafnpp_model)$coefficients[4,1] * log(PPFD$myvar)
+  summary(anpp_leafnpp_model)$coefficients[2,1]* fAPAR$fAPAR +
+  summary(anpp_leafnpp_model)$coefficients[3,1] * log(vpd$vpd) + 
+  summary(anpp_leafnpp_model)$coefficients[4,1] * log(PPFD$PPFD)
 
 mod_lnpp_uncertainty <- mod_lnpp_uncertainty *  exp(-lnpp_b) / ( (1 + exp(-lnpp_b)) ^2)
 summary(mod_lnpp_uncertainty) #uncerainty of leafnpp to anpp
@@ -2422,7 +2428,7 @@ summary(mod_leafnc_uncertainty)
 #NRE
 mod_nre_uncertainty <- summary(nre_model)$sigma
 nre_b <- summary(nre_model)$coefficients[1,1]  +
-  summary(nre_model)$coefficients[2,1] * Tg$myvar + summary(nre_model)$coefficients[3,1] * log(vpd$myvar)
+  summary(nre_model)$coefficients[2,1] * Tg$Tg + summary(nre_model)$coefficients[3,1] * log(vpd$vpd)
 mod_nre_uncertainty <- mod_nre_uncertainty *  exp(-nre_b) / ( (1 + exp(-nre_b)) ^2)
 summary(mod_nre_uncertainty)
 
