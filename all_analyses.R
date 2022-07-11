@@ -12,10 +12,10 @@ library(dplyr)
 library(gplots)
 library(tidyselect)
 library(extrafont)
-library(caret)
 library(recipes)
-devtools::load_all("/Users/yunpeng/yunkepeng/rbeni/")
-#library(rbeni)
+library(caret)
+# devtools::load_all("/Users/yunpeng/yunkepeng/rbeni/") ## XXX doesn't work across platforms
+library(rbeni)
 library(raster)
 library(maps)
 library(rworldmap)
@@ -434,7 +434,7 @@ stepwise_lm <- function(df_input,target_var){
 NPP_all <- read.csv("~/data/NPP_Yunke/NPP_Nmin_dataset_with_predictors.csv")
 
 #summarise number of sites
-dim(subset(NPP_all,is.na(Nmin)==TRUE) %>% group_by(site)  %>% summarise(mean = mean(lon)))
+dim(subset(NPP_all,is.na(Nmin)==TRUE) %>% group_by(site) %>% summarise(mean = mean(lon)))
 
 NPP_all$NPP.foliage[NPP_all$NPP.foliage==0] <-NA
 NPP_all$NPP.wood[NPP_all$NPP.wood==0] <-NA
@@ -752,7 +752,8 @@ b4 <- as.ggplot(~barplot(vif_bp_grass, main = "VIF of Grassland BP model", horiz
 plot_grid(b1,b2,b3,b4,
           labels = c('(a)','(b)','(c)','(d)'),
           ncol=2,label_x = 0.9,label_y=0.92)+white
-ggsave(paste("~/data/output/newphy_vif_figs.jpg",sep=""),width = 10, height = 13)
+
+ggsave(paste("./output/newphy_vif_figs.jpg",sep=""),width = 10, height = 13) # xxx avoid absolute paths for outputs. should be written to "./output"
 
 #forest validation
 NPP_forest$pred_npp <- summary(bp_model)$coefficients[1,1] +  
@@ -866,7 +867,7 @@ plot_grid(p1,p2,p5,
           p6,p12,p7, 
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'),
           ncol=3,label_x = 0.9,label_y=0.92,label_size = 25)+white
-ggsave(paste("~/data/output/newphy_fig2.jpg",sep=""),width = 24, height = 25)
+ggsave(paste("./output/newphy_fig2.jpg",sep=""),width = 24, height = 25)
 
 #now, inputting all predictors
 vcmax25_df <- as.data.frame(nc_to_df(read_nc_onefile(
@@ -1218,7 +1219,7 @@ plot_grid(a3,a4,a5,a6,a7,a8,
                      '(d)',' ','(e)',' ','(f)',' '))
 
 #this is for showing points
-ggsave(paste("~/data/output/newphy_fig3_SI.jpg",sep=""),width = 20, height = 10*(2/3))
+ggsave(paste("./output/newphy_fig3_SI.jpg",sep=""),width = 20, height = 10*(2/3))
 
 
 #preparing one without showing points - in MS
@@ -1289,7 +1290,7 @@ plot_grid(a3,a4,a5,a6,a7,a8,
           rel_widths = c(3/12, 1/12,3/12,1/12,3/12,1/12),
           labels = c('(a)',' ','(b)',' ','(c)',' ',
                      '(d)',' ','(e)',' ','(f)',' '))
-ggsave(paste("~/data/output/newphy_fig3.jpg",sep=""),width = 20, height = 10*(2/3))
+ggsave(paste("./output/newphy_fig3.jpg",sep=""),width = 20, height = 10*(2/3))
 
 #work on effect of each factor on NUE
 #now, work on NUE
@@ -1458,11 +1459,11 @@ aa8 <- ggplot(data = nue_all) + stat_summary(mapping = aes(y = name, x = LMA),fu
 
 plot_grid(a1,a2,a3,a4,a5,a6,a7,a8,a9,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("~/data/output/newphy_fig4.jpg",sep=""),width = 22, height = 10)
+ggsave(paste("./output/newphy_fig4.jpg",sep=""),width = 22, height = 10)
 
 plot_grid(aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("~/data/output/newphy_fig4_parallel.jpg",sep=""),width = 22, height = 10)
+ggsave(paste("./output/newphy_fig4_parallel.jpg",sep=""),width = 22, height = 10)
 
 gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_CNrt")]),varnam = "nue_CNrt",latmin = -65, latmax = 85,combine=FALSE,
                 colorscale = c( "royalblue4", "wheat","tomato3"),
@@ -1512,7 +1513,7 @@ plot_grid(g1,g2,g3,g4,g5,g6,
                      '(d)',' ','(e)',' ','(f)',' ',
                      '(g)',' ','(h)',' '),label_size = 15)+white
 
-ggsave(paste("~/data/output/newphy_fig4_not_used.jpg",sep=""),width = 20, height = 10)
+ggsave(paste("./output/newphy_fig4_not_used.jpg",sep=""),width = 20, height = 10)
 
 
 #figs2 representing all predictors
@@ -1548,7 +1549,7 @@ plot_grid(d1,d2,d3,d4,d5,d6,
                      '(d)',' ','(e)',' ','(f)',' ',
                      '(g)',' ','(h)',' '),label_size = 15)+ white
 
-ggsave(paste("~/data/output/newphy_figS2.jpg",sep=""),width = 20, height = 10)
+ggsave(paste("./output/newphy_figS2.jpg",sep=""),width = 20, height = 10)
 
 #trendy
 #model output
@@ -2080,7 +2081,7 @@ plot_grid(final1,final2,final3,legend_info,
           final1_nue6,final1_nue8,final1_nue4,white,
           nrow=3,label_x = 0.8, label_y = 0.8)+white
 
-ggsave(paste("~/data/output/newphy_fig5.jpg",sep=""), width = 20, height = 15)
+ggsave(paste("./output/newphy_fig5.jpg",sep=""), width = 20, height = 15)
 
 #nue and nuptake relation
 #also, our simulations
@@ -2118,7 +2119,7 @@ plot_grid(final1_nue1,final1_nue2,final1_nue3,final1_nue4,
           final1_nue5,final1_nue6,final1_nue7,final1_nue8,
           nrow=2,label_x = 0.8, label_y = 0.8)+white
 
-ggsave(paste("~/data/output/newphy_add1.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/newphy_add1.jpg",sep=""), width = 20, height = 10)
 
 # n uptake
 mod_nue3 <- (lm(pred_nuptake~LMA_a+fAPAR_a+age_a+vpd_a+CNrt_a+Tg_a+vcmax25_a+PPFD_a,data=nue_allplots))
@@ -2145,7 +2146,7 @@ plot_grid(final1_nue1,final1_nue2,final1_nue3,final1_nue4,
           final1_nue5,final1_nue6,final1_nue7,final1_nue8,
           nrow=2,label_x = 0.8, label_y = 0.8)+white
 
-ggsave(paste("~/data/output/newphy_add2.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/newphy_add2.jpg",sep=""), width = 20, height = 10)
 
 #validation - BP
 NPP_statistical$Measured_BP <- NPP_statistical$TNPP_1
@@ -2193,7 +2194,7 @@ plot_grid(pp2,pp4,pp5,pp6,pp7,pp8,pp9,pp10,pp11,pp12,pp13,pp14,pp15,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)','(m)'),
           nrow=5,label_x = 0.9,label_y=0.92,label_size = 20)+white
 
-ggsave(paste("~/data/output/newphy_figs5.jpg",sep=""), width = 23, height = 25)
+ggsave(paste("./output/newphy_figs5.jpg",sep=""), width = 23, height = 25)
 
 #validation - N uptake
 Nmin_statistical$pred_nuptake
@@ -2226,7 +2227,7 @@ plot_grid(ppp1,ppp3,ppp4,ppp5,ppp6,
           labels = c('(a)','(b)','(c)','(d)','(e)'),
           nrow=2,label_x = 0.9,label_y=0.92,label_size = 20)+white
 
-ggsave(paste("~/data/output/newphy_figs6.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/newphy_figs6.jpg",sep=""), width = 20, height = 10)
 
 #MAPE
 mean(abs((NPP_statistical$TNPP_1-NPP_statistical$CLM_NPP)/NPP_statistical$TNPP_1),na.rm=TRUE) * 100
@@ -2341,7 +2342,7 @@ plot_grid(a1,a2,a3,a4,a5,
           a15,a16,white,white,white,
           nrow=5)+white
 
-ggsave(paste("~/data/output/newphy_figs1.jpg",sep=""), width = 20, height = 20)
+ggsave(paste("./output/newphy_figs1.jpg",sep=""), width = 20, height = 20)
 
 #table s1
 names(all_maps)
@@ -2557,4 +2558,4 @@ plot_grid(a1,a2,a3,a4,a5,
           a6,a7,a8,a9,white,
           nrow=2)+white
 
-ggsave(paste("~/data/output/newphy_figs1b.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/newphy_figs1b.jpg",sep=""), width = 20, height = 10)
