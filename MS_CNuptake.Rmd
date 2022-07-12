@@ -22,8 +22,8 @@ library(tidyselect)
 library(extrafont)
 library(caret)
 library(recipes)
-#devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/") # using beni's latest package.
-library(rbeni)
+devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/") # using beni's latest package.
+#library(rbeni)
 library(raster)
 library(maps)
 library(rworldmap)
@@ -403,7 +403,7 @@ dim(wood_cn_sitemean)
 #root c/n model median = 41.
 #see line 887-888 in Forest_site_org, all derived from "TianDi Grassland", but its BP, ANPP, BNPP data not used in our study
 #summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
-#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
+#summary(aggregate(subset(dataset6,pft=="Grassland")  ,by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
 ```
 
 ## NRE 
@@ -1180,7 +1180,7 @@ ggsave(paste("./output/newphy_figS2.jpg",sep=""),width = 20, height = 10)
 # TRENDY analysis
 
 ## Read data
-```{r}
+```{r warning=FALSE}
 #trendy
 #model output
 #CABLE-POP
@@ -1284,7 +1284,7 @@ SDGVM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_n
 
 ## BP
 
-```{r}
+```{r warning=FALSE}
 #all_maps
 not_used <- list(CLASS_GPP,CLASS_NPP,CLM_GPP,CLM_NPP,JSBACH_fNup,JSBACH_GPP,JSBACH_NPP)
 
@@ -2164,7 +2164,7 @@ sqrt(sum(uncertainty_nuptake*(forest_percent *conversion)*available_grid2,na.rm=
 #forest nue uncertainty:
 (55.74/0.79) * sqrt( (10.62/55.74)^2 +(0.23/0.79)^2)
 #grassland nue uncertainty:
-(16.37/0.34) * sqrt( (9.65/16.37)^2 +(0.15/0.34)^2)
+(16.32/0.34) * sqrt( (9.65/16.32)^2 +(0.15/0.34)^2)
 #pft
 (72.06/1.13) * sqrt( (14.35/72.06)^2 +(0.27/1.13)^2)
 ```
