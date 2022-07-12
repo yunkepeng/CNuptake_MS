@@ -6,9 +6,8 @@ date: '2022-07-11'
 
 # Setup 
 ```{r setup, include=FALSE}
-rm(list=ls())
 library(MLmetrics)
-library(vhs)
+library(vhs) # remotes::install_github("cj-holmes/vhs")
 library(tidyverse) 
 library(ncmeta)
 library(viridis)
@@ -24,7 +23,7 @@ library(extrafont)
 library(caret)
 library(recipes)
 #remotes::install_github("cj-holmes/vhs")
-devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/")
+# devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/")
 library(rbeni)
 library(raster)
 library(maps)
@@ -549,6 +548,7 @@ NPP_grassland$grassland_pred_npp <- summary(bp_grass_model)$coefficients[1,1] +
   summary(bp_grass_model)$coefficients[2,1] * NPP_grassland$PPFD_a +
   summary(bp_grass_model)$coefficients[3,1] * NPP_grassland$Tg_a 
 
+# XXX what are these numbers (0.49, 18, 41, ...)?
 NPP_grassland$grassland_pred_anpp <- NPP_grassland$grassland_pred_npp * 0.49
 NPP_grassland$grassland_pred_lnf <- NPP_grassland$grassland_pred_anpp/18
 NPP_grassland$grassland_pred_bnpp <- NPP_grassland$grassland_pred_npp - NPP_grassland$grassland_pred_anpp
@@ -781,6 +781,8 @@ npp_g <- summary(bp_grass_model)$coefficients[1,1] +
 npp_g[npp_g<=0] <- NA
 
 summary(npp_g)
+
+# XXX what are these numbers (0.49, 1/18, 0.69, ...)?
 
 anpp_g <- npp_g* 0.49
 bnpp_g <- npp_g-anpp_g
@@ -2228,6 +2230,8 @@ uncertainty_nuptake <- sqrt(uncertainty_lnf^2 + uncertainty_wnf^2 + uncertainty_
 
 ## Grassland
 ```{r}
+
+# XXX what are these numbers (0.49, 0.51, ...)?
 
 #grassland
 uncertainty_npp_grassland
