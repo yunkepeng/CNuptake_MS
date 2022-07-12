@@ -226,6 +226,7 @@ BIC(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_datase
 anpp_leafnpp_dataset <- na.omit(NPP_forest[,c("anpp_leafnpp_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a")])
 model3 <- stepwise(anpp_leafnpp_dataset,"anpp_leafnpp_a")
 model3[[1]]
+model3[[2]]
 model3[[3]]
 anpp_leafnpp_model <- (lmer(anpp_leafnpp_a~fAPAR_a+vpd_a+PPFD_a+(1|site_a),data=anpp_leafnpp_dataset)) 
 r.squaredGLMM(anpp_leafnpp_model)
@@ -975,7 +976,7 @@ a13 <- gg$ggmap +
   labs(title = paste("NUE: ", total_value, " ", sep=" " ))+
   theme_grey(base_size = 12)+ white
 
-a14 <- gg$gglegend+labs(title = ~paste("gN m"^-2,"yr"^-1))+ white
+a14 <- gg$gglegend+ white
 
 plot_grid(a3,a4,a5,a6,a7,a8,
           a9,a10,a11,a12,a13,a14,
@@ -1050,7 +1051,7 @@ a13 <- gg$ggmap +
   labs(title = paste("NUE: ", total_value, " ", sep=" " ))+
   theme_grey(base_size = 12)+ white
 
-a14 <- gg$gglegend+labs(title = ~paste("gN m"^-2,"yr"^-1))+ white
+a14 <- gg$gglegend+ white
 
 plot_grid(a3,a4,a5,a6,a7,a8,
           a9,a10,a11,a12,a13,a14,
