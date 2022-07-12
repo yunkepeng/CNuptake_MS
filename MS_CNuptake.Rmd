@@ -547,7 +547,17 @@ NPP_grassland$grassland_pred_npp <- summary(bp_grass_model)$coefficients[1,1] +
   summary(bp_grass_model)$coefficients[2,1] * NPP_grassland$PPFD_a +
   summary(bp_grass_model)$coefficients[3,1] * NPP_grassland$Tg_a 
 
-# XXX what are these numbers (0.49, 18, 41, ...)?
+# what are these numbers (0.49, 18, 41, ...)
+# 0.49 as derived from anpp/tnpp ratio (fixed in grassland)
+summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean)))
+
+#For 18 and 41 they are fixed values of leaf and root C/N, as derived from "Tian Di Grassland"
+#see line 899 in https://github.com/yunkepeng/nimpl_sofun_inputs_final/blob/main/submission_newphytol/preprocessing/Forest_site_orig.R, 
+#data all derived from "TianDi Grassland", but their BP, ANPP, BNPP data not used in our study
+#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
+#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
+
+
 NPP_grassland$grassland_pred_anpp <- NPP_grassland$grassland_pred_npp * 0.49
 NPP_grassland$grassland_pred_lnf <- NPP_grassland$grassland_pred_anpp/18
 NPP_grassland$grassland_pred_bnpp <- NPP_grassland$grassland_pred_npp - NPP_grassland$grassland_pred_anpp
@@ -781,7 +791,10 @@ npp_g[npp_g<=0] <- NA
 
 summary(npp_g)
 
-# XXX what are these numbers (0.49, 1/18, 0.69, ...)?
+# what are these numbers (0.49, 1/18, 0.69, ...)
+# 0.49, as explained above - are anpp/npp ratio in grassland (see line 552)
+# 18, as explained above - are constant leaf C/N (see line 554)
+# 0.69, as explained in above line - are constant NRE see line 442)
 
 anpp_g <- npp_g* 0.49
 bnpp_g <- npp_g-anpp_g
@@ -1082,7 +1095,7 @@ summary(nue_all)
 nue_all$NUE <- all_maps$NUE
 ```
 
-### Figure 4
+### Figure 3
 ```{r}
 #show soil C/N effects on NUE
 #aggregate
@@ -1119,85 +1132,9 @@ plot_grid(a1,a2,a3,a4,a5,a6,a7,a8,a9,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
 ggsave(paste("./output/newphy_fig3.jpg",sep=""),width = 22, height = 10)
 
-#plot_grid(aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,
-#          labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-#ggsave(paste("~/data/output/newphy_fig4_parallel.jpg",sep=""),width = 22, height = 10)
-```
-
-### Global maps for effect of each factor NUE (not used now)
-
-```{r}
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_CNrt")]),varnam = "nue_CNrt",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3"),
-                breaks = seq(-0.05,0.05,0.01))
-g1 <- gg$ggmap +labs(title = "Soil C/N")+theme_grey(base_size = 15);g2 <- gg$gglegend
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_age")]),varnam = "nue_age",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4","royalblue3","wheat","tomato3"),
-                breaks = seq(-0.05,0.05,0.01))
-g3 <- gg$ggmap +labs(title = "Age")+theme_grey(base_size = 15);g4 <- gg$gglegend+labs(title = ~paste("years"))
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_fAPAR")]),varnam = "nue_fAPAR",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4","royalblue3", "wheat","tomato3"),
-                breaks = seq(-0.04,0.04,0.01))
-g5 <- gg$ggmap +labs(title = "fAPAR")+theme_grey(base_size = 15);g6 <- gg$gglegend
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_PPFD")]),varnam = "nue_PPFD",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3","tomato4"),
-                breaks = seq(-0.08,0.12,0.02))
-g7 <- gg$ggmap +labs(title = "PPFD")+theme_grey(base_size = 15);g8 <- gg$gglegend + labs(title =~paste(mu, "mol m"^-2,"s"^-1))
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_Tg")]),varnam = "nue_Tg",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3"),
-                breaks = seq(-0.30,0.30,0.10))
-g9 <- gg$ggmap +labs(title =~paste(T[g]))+theme_grey(base_size = 15);g10 <- gg$gglegend + labs(title =~paste("\u00B0C"))
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_vpd")]),varnam = "nue_vpd",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3"),
-                breaks = seq(-0.20,0.30,0.05))
-g11 <- gg$ggmap +labs(title = "D")+theme_grey(base_size = 15);g12 <- gg$gglegend+ labs(title =~paste("kPa"))
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_vcmax25")]), varnam = "nue_vcmax25",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3"),
-                breaks = seq(-0.2,0.2,0.04))
-g15 <- gg$ggmap +labs(title =~paste(V[cmax25]))+theme_grey(base_size = 15);g16 <- gg$gglegend+ labs(title =~paste(mu, "mol m"^-2,"s"^-1))
-
-gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_LMA")]),varnam = "nue_LMA",latmin = -65, latmax = 85,combine=FALSE,
-                colorscale = c( "royalblue4", "wheat","tomato3"),
-                breaks = seq(-0.05,0.05,0.01))
-g17 <- gg$ggmap +labs(title = "LMA")+theme_grey(base_size = 15);g18 <- gg$gglegend+ labs(title =~paste("g ","m"^-2))
-
-#plot_grid(g1,g2,g3,g4,g5,g6,
-#          g7,g8,g9,g10,g11,g12,
-#          g15,g16,g17,g18,
-#          nrow=3,rel_widths = c(3/12, 1/12,3/12,1/12,3/12,1/12),
-#          labels = c('(a)',' ','(b)',' ','(c)',' ',
-#                     '(d)',' ','(e)',' ','(f)',' ',
-#                     '(g)',' ','(h)',' '),label_size = 15)+white
-#
-#ggsave(paste("~/data/output/newphy_fig4_not_used.jpg",sep=""),width = 20, height = 10)
-
-g1
-g2
-g3
-g4
-g5
-g6
-g7
-g8
-g9
-g10
-g11
-g12
-g15
-g16
-g17
-g18
-=======
 plot_grid(aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("./output/newphy_figs7.jpg",sep=""),width = 22, height = 10)
->>>>>>> dc4d6d3784f86766727dcb656a91a51ca08a6e24
+ggsave(paste("~/data/output/newphy_figs7.jpg",sep=""),width = 22, height = 10)
 ```
 
 ### Global maps of each predictors
@@ -1269,14 +1206,14 @@ CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 
 ISAM_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_fNup_ANN_mean.nc"), varnam = "fNup"))
 
-# XXX what are these numbers that you multiply here?
-ISAM_fNup$myvar<- ISAM_fNup$fNup*1000*31556952
+# The values multiply here is for unit from kg/m2/month to g/m2/yr (1000 for kg to g, and 31556952 from 1/second to 1/year)
+ISAM_fNup$fNup<- ISAM_fNup$fNup*1000*31556952
 
 ISAM_gpp <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
-ISAM_gpp$myvar<- ISAM_gpp$gpp*1000*31556952
+ISAM_gpp$gpp<- ISAM_gpp$gpp*1000*31556952
 
 ISAM_npp <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_npp_ANN_mean.nc"), varnam = "npp"))
-ISAM_npp$myvar<- ISAM_npp$npp*1000*31556952
+ISAM_npp$npp<- ISAM_npp$npp*1000*31556952
 
 #ISBA
 ncin <- nc_open("~/data/trendy/v8/ISBA-CTRIP_S2_gpp_ANN_mean.nc")
@@ -1907,7 +1844,7 @@ plot_grid(pp2,pp4,pp5,pp6,pp7,pp8,pp9,pp10,pp11,pp12,pp13,pp14,pp15,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)','(m)'),
           nrow=5,label_x = 0.9,label_y=0.92,label_size = 20)+white
 
-ggsave(paste("./output/newphy_fortable2.jpg",sep=""), width = 23, height = 25)
+ggsave(paste("./output/newphy_fortable2a.jpg",sep=""), width = 23, height = 25)
 ```
 
 ## N uptake validation between models
@@ -1944,7 +1881,7 @@ plot_grid(ppp1,ppp3,ppp4,ppp5,ppp6,
          labels = c('(a)','(b)','(c)','(d)','(e)'),
         nrow=2,label_x = 0.9,label_y=0.92,label_size = 20)+white
 
-ggsave(paste("./output/newphy_fortable2.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/newphy_fortable2b.jpg",sep=""), width = 20, height = 10)
 ```
 
 ### visreg for BP and anpp/bp vs. all measured predictors
@@ -2174,7 +2111,8 @@ uncertainty_nuptake <- sqrt(uncertainty_lnf^2 + uncertainty_wnf^2 + uncertainty_
 ## Grassland
 ```{r}
 
-# XXX what are these numbers (0.49, 0.51, ...)?
+# 0.49, as explained above - are anpp/npp ratio in grassland (see line 552)
+# 0.51, is 1- 0.51, for bnpp/npp ratio
 
 #grassland
 uncertainty_npp_grassland
