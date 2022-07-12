@@ -8,6 +8,7 @@ date: '2022-07-11'
 ```{r setup, include=FALSE}
 rm(list=ls())
 library(MLmetrics)
+library(vhs)
 library(tidyverse) 
 library(ncmeta)
 library(viridis)
@@ -22,7 +23,8 @@ library(tidyselect)
 library(extrafont)
 library(caret)
 library(recipes)
-#devtools::load_all("/Users/yunpeng/yunkepeng/rbeni/")
+#remotes::install_github("cj-holmes/vhs")
+devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/")
 library(rbeni)
 library(raster)
 library(maps)
@@ -151,7 +153,8 @@ summary(lmer(anpp_leafnpp_a~ndep_a+vpd_a+Tg_a+(1|site_a),data=anpp_leafnpp_datas
 r.squaredGLMM(lmer(anpp_leafnpp_a~ndep_a+vpd_a+Tg_a+(1|site_a),data=anpp_leafnpp_dataset_noage_ndep))
 ```
 
-### BP Again ??? XXX
+### BP vs. model predictors
+
 ```{r}
 #now, start works
 BP_dataset2 <- na.omit(NPP_forest[,c("tnpp_a","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a")])
@@ -179,7 +182,8 @@ vif_bp <- vif((lmer(tnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+vpd_a+(1|site_a),dat
 
 ```
 
-### ANPP again? XXX
+### ANPP vs. modelled predictors
+
 ```{r}
 anpp_tnpp_dataset2 <- na.omit(NPP_forest[,c("anpp_tnpp_a","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a")])
 dim(subset(NPP_forest,ANPP_2>0))
@@ -380,7 +384,6 @@ dim(subset(SP_input_mean,C_percent>0))
 ```
 
 ### Root C:N
-XXX why is variable called 'forest'?
 ```{r warning=FALSE}
 # Root C/N = 94 - as derived from median values of collected samples
 NPP_forest_sitemean <- aggregate(NPP_forest,by=list(NPP_forest$site), FUN=mean, na.rm=TRUE) 
@@ -407,7 +410,6 @@ dim(wood_cn_sitemean)
 
 ## NRE 
 
-XXX this is about NRE, but section 'NRE' above as well 
 ```{r}
 #NRE = 69%
 NRE_Du <- read.csv(file="~/data/NRE_various/NRE_Du/NRE_Du.csv")
@@ -500,7 +502,8 @@ NPP_forest$pred_nre <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
                                      summary(nre_model)$coefficients[2,1] *NPP_forest$Tg_a +
                                      summary(nre_model)$coefficients[3,1] * NPP_forest$vpd_a))))
 
-# XXX explain how hard-coded numbers are obtained. Better replace them by dynamically defined variables. 
+# 100 and 94 are constant.
+
 NPP_forest$pred_wnf <- NPP_forest$pred_wnpp/100
 NPP_forest$pred_bnf <- NPP_forest$pred_bnpp/94
 
@@ -856,7 +859,7 @@ area_m2 <- calc_area(lonlat$lat,0.5,0.5)
 #fland - to show each grid's land cover percentage
 nc <- read_nc_onefile("~/data/fland/global.fland.nc") #Input nc
 output_fland <- nc_to_df(nc, varnam = "fland")
-fland <- output_fland$myvar
+fland <- output_fland$fland
 #include conversion factor (from g to Pg)
 conversion <- area_m2 * fland /1e+15
 ```
@@ -1120,8 +1123,8 @@ aa8 <- ggplot(data = nue_all) + stat_summary(mapping = aes(y = name, x = LMA),fu
 #ggsave(paste("~/data/output/newphy_fig4_parallel.jpg",sep=""),width = 22, height = 10)
 ```
 
-### ???
-XXX what is this figure?
+### Global maps for effect of each factor NUE (not used now)
+
 ```{r}
 gg <- plot_map3(na.omit(nue_all[,c("lon","lat","nue_CNrt")]),varnam = "nue_CNrt",latmin = -65, latmax = 85,combine=FALSE,
                 colorscale = c( "royalblue4", "wheat","tomato3"),
@@ -1191,8 +1194,8 @@ g17
 g18
 ```
 
-### ???
-XXX what is this figure?
+### Global maps of each predictors
+
 ```{r warning=FALSE}
 #figs2 representing all predictors
 gg <- plot_map3(na.omit(CNrt[,c("lon","lat","CNrt")]),varnam = "CNrt",latmin = -65, latmax = 85,combine=FALSE)
@@ -1250,7 +1253,6 @@ d16
 
 ## Read data
 ```{r}
-
 #trendy
 #model output
 #CABLE-POP
@@ -1352,9 +1354,8 @@ SDGVM_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_g
 SDGVM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_npp_ANN_mean.nc"), varnam = "npp"))
 ```
 
-## Plot???
+## BP
 
-XXX What plot?
 ```{r}
 
 #all_maps
@@ -1374,8 +1375,8 @@ obj_name <- c("CABLE_GPP","CABLE_NPP","ISAM_fNup","ISAM_gpp","ISAM_npp","ISBA_GP
               "JULES_GPP","JULES_NPP","LPJ_GPP","LPJ_NPP","ORCHIDEE_GPP","ORCHIDEE_NPP",
               "ORCHICNP_fNup","ORCHICNP_GPP","ORCHICNP_NPP","SDGVM_GPP","SDGVM_NPP")
 #calculate nue 
-summary( ISAM_npp$myvar/ISAM_fNup$myvar)
-summary(na.omit(ORCHICNP_NPP$myvar/ORCHICNP_fNup$myvar))
+summary( ISAM_npp$npp/ISAM_fNup$ISAM_npp)
+summary(na.omit(ORCHICNP_NPP$npp/ORCHICNP_fNup$ISAM_npp))
 
 #aggregate based on lon and lat firstly
 sitemean <- unique(NPP_forest[,c("lon","lat")])
@@ -1429,7 +1430,7 @@ BP_dataset3<- aggregate(BP_dataset3,by=list(BP_dataset3$lon,BP_dataset3$lat), FU
 
 ```
 
-## Fit models
+### Fit models
 
 Fit models with environmental factors
 ```{r}
@@ -1537,7 +1538,7 @@ mod5$coefficients;mod6$coefficients;mod7$coefficients;mod8$coefficients;
 mod9$coefficients;mod10$coefficients;mod11$coefficients;mod12$coefficients
 ```
 
-## Plot partial dependencies
+### Plot partial dependencies
 ```{r}
 
 t1a <- visreg(mod1,"Tg_a",type="contrast");t2a <-visreg(mod2,"Tg_a",type="contrast");t3a <-visreg(mod3,"Tg_a",type="contrast");t4a <- visreg(mod4,"Tg_a",type="contrast");t5a <- visreg(mod5,"Tg_a",type="contrast");t6a <-visreg(mod6,"Tg_a",type="contrast");t7a <- visreg(mod7,"Tg_a",type="contrast");t8a <-visreg(mod8,"Tg_a",type="contrast");t9a <-visreg(mod9,"Tg_a",type="contrast");t10a <-visreg(mod10,"Tg_a",type="contrast");t11a <-visreg(mod11,"Tg_a",type="contrast");t12a <-visreg(mod12,"Tg_a",type="contrast")
@@ -1562,9 +1563,9 @@ final1_legend <- ggplot() +geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, gr
 legend_info <- as_ggplot(get_legend(final1_legend))
 ```
 
-## XXX ???
-```{r}
+## N uptake
 
+```{r}
 #nuptake figure
 #N minerlization
 Nmin_statistical <- subset(NPP_forest,Nmin>0)
@@ -1683,7 +1684,8 @@ final1d <- ggplot()+xlim(-0.8,1) +geom_line(data = subset(fits_vpd1,plt=="Measur
   scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 ```
 
-## XXX ??
+### NUE
+
 ```{r}
 
 #nue model for TRENDY
@@ -1851,7 +1853,8 @@ final1_nue8 <- ggplot() +geom_line(data = nue8c$fit, aes(PPFD_a, visregFit),size
 
 ```
 
-## XXX ?
+## Nuptake or NUE vs. all predictors
+
 ```{r}
 # n uptake
 mod_nue3 <- (lm(pred_nuptake~LMA_a+fAPAR_a+age_a+vpd_a+CNrt_a+Tg_a+vcmax25_a+PPFD_a,data=nue_allplots))
@@ -1934,7 +1937,8 @@ pp15 <- analyse_modobs2(NPP_statistical,"LPX_NPP","Measured_BP", type = "points"
 
 ```
 
-## XXX ???
+## N uptake validation between models
+
 ```{r}
 #validation - N uptake
 Nmin_statistical$pred_nuptake
@@ -1998,7 +2002,7 @@ mean(abs((Nmin_statistical$Nmin-Nmin_statistical$pred_nuptake)/Nmin_statistical$
 
 ```
 
-## XXX what figure does this produce? 
+### visreg for BP and anpp/bp vs. all measured predictors
 ```{r}
 #visreg
 
@@ -2234,7 +2238,8 @@ uncertainty_bnf_grassland <- uncertainty_npp_grassland*0.51/41
 uncertainty_nuptake_grassland <- sqrt(uncertainty_lnf_grassland^2 + uncertainty_bnf_grassland^2)
 ```
 
-### XXX?
+### statistics of uncertainty
+
 ```{r}
 #all statistics
 #forest
@@ -2279,7 +2284,8 @@ sqrt(sum(uncertainty_nuptake*(forest_percent *conversion)*available_grid2,na.rm=
 (72.06/1.13) * sqrt( (14.35/72.06)^2 +(0.27/1.13)^2)
 ```
 
-### XXX?
+### BP partial relationship vs. observations
+
 ```{r}
 #partial residual figure
 BP_dataset <- na.omit(NPP_forest[,c("tnpp_a","obs_age_a","observedfAPAR_a","soilCN_a","Tg_a","PPFD_a","vpd_a","site_a")])
