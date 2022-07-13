@@ -382,7 +382,7 @@ summary(SP_input_mean$C_percent,na.rm=TRUE)
 dim(subset(SP_input_mean,C_percent>0))
 ```
 
-### Root C:N
+### Forest Root C:N
 ```{r warning=FALSE}
 # Root C/N = 94 - as derived from median values of collected samples
 NPP_forest_sitemean <- aggregate(NPP_forest,by=list(NPP_forest$site), FUN=mean, na.rm=TRUE) 
@@ -391,7 +391,7 @@ dim(subset(NPP_forest,CN_root_final>0))
 
 ```
 
-### Wood C:N
+### Forest Wood C:N + grassland leaf and root C/N
 ```{r warning=FALSE}
 # Wood C/N = 100 - as derived median values of TRY database
 wood_cn <- read.csv("~/data/CN_wood/wood_cn.csv")
@@ -501,7 +501,7 @@ NPP_forest$pred_nre <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
                                      summary(nre_model)$coefficients[2,1] *NPP_forest$Tg_a +
                                      summary(nre_model)$coefficients[3,1] * NPP_forest$vpd_a))))
 
-# 100 and 94 are constant.
+# 100 and 94 are constant, see above for forest wood and root C/N
 
 NPP_forest$pred_wnf <- NPP_forest$pred_wnpp/100
 NPP_forest$pred_bnf <- NPP_forest$pred_bnpp/94
@@ -553,11 +553,11 @@ NPP_grassland$grassland_pred_npp <- summary(bp_grass_model)$coefficients[1,1] +
 summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean)))
 
 #For 18 and 41 they are fixed values of leaf and root C/N, as derived from "Tian Di Grassland"
+#see line 402-403
 #see line 899 in https://github.com/yunkepeng/nimpl_sofun_inputs_final/blob/main/submission_newphytol/preprocessing/Forest_site_orig.R, 
 #data all derived from "TianDi Grassland", but their BP, ANPP, BNPP data not used in our study
 #summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
 #summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
-
 
 NPP_grassland$grassland_pred_anpp <- NPP_grassland$grassland_pred_npp * 0.49
 NPP_grassland$grassland_pred_lnf <- NPP_grassland$grassland_pred_anpp/18
@@ -1068,7 +1068,6 @@ ggsave(paste("./output/newphy_fig2.jpg",sep=""),width = 20, height = 10*(2/3))
 #now, work on NUE
 nue_final <- all_maps$NUE # by default
 
-
 nue_standard <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,
                         age$age,CNrt$CNrt,LMA$LMA,vcmax25_df$vcmax25)
 summary(nue_standard)
@@ -1303,8 +1302,8 @@ obj_name <- c("CABLE_GPP","CABLE_NPP","ISAM_fNup","ISAM_gpp","ISAM_npp","ISBA_GP
               "JULES_GPP","JULES_NPP","LPJ_GPP","LPJ_NPP","ORCHIDEE_GPP","ORCHIDEE_NPP",
               "ORCHICNP_fNup","ORCHICNP_GPP","ORCHICNP_NPP","SDGVM_GPP","SDGVM_NPP")
 #calculate nue 
-summary( ISAM_npp$npp/ISAM_fNup$ISAM_npp)
-summary(na.omit(ORCHICNP_NPP$npp/ORCHICNP_fNup$ISAM_npp))
+summary( ISAM_npp$npp/ISAM_fNup$fNup)
+summary(na.omit(ORCHICNP_NPP$npp/ORCHICNP_fNup$fNup))
 
 #aggregate based on lon and lat firstly
 sitemean <- unique(NPP_forest[,c("lon","lat")])
@@ -1980,9 +1979,9 @@ a16 <- ~{
 #ggsave(paste("./output/newphy_figs3.jpg",sep=""), width = 20, height = 20)
 ```
 
-# Uncertainty quantification
+# Total estimations and Uncertainty quantification
 
-## NPP
+## total estimations
 ```{r}
 
 #table s1
@@ -1997,6 +1996,13 @@ for (i in 4:30){
 #it seems that forest + grassland doesn't completely equal to pft (with decimal degree uncertainty 0.01)
 #in this way, we re-calculate grassland = pft - forest 
 
+
+```
+
+## Error propagation
+### BP, ANPP
+```{r}
+
 #error propagation - needs updates fapar
 
 # forest,grassland and 2-pft npp uncertainty
@@ -2007,11 +2013,7 @@ uncertainty_npp_grassland <- summary(bp_grass_model)$sigma
 # for all logit function model (mod_tnpp, mod_anpp, mod_lnpp, nre_model): a = 1/(1+exp(-b)), where a is the ratio (e.g. npp/gpp) and b is the regression (e.g. mod =tnpp)
 #we calculate uncertainty of b firstly, based on each regression
 #now we need to calculate deriative a / deriative b, based on a = 1/(1+exp(-b)). After calculation it is: exp(-b) / ( (1 + exp(-b)) ^2)
-```
 
-## Forest
-### ANPP
-```{r}
 # forest anpp
 mod_anpp_uncertainty <- summary(anpp_tnpp_model)$sigma
 anpp_b <- summary(anpp_tnpp_model)$coefficients[1,1]+
