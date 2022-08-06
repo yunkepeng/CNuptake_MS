@@ -7,7 +7,7 @@ date: '2022-07-11'
 # Setup 
 ```{r setup, include=FALSE}
 library(MLmetrics)
-library(vhs) # remotes::install_github("cj-holmes/vhs")
+library(vhs) ##remotes::install_github("cj-holmes/vhs")
 library(tidyverse) 
 library(ncmeta)
 library(viridis)
