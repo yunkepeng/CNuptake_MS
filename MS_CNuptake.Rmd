@@ -1134,7 +1134,7 @@ ggsave(paste("./output/newphy_fig3.jpg",sep=""),width = 22, height = 10)
 
 plot_grid(aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("~/data/output/newphy_figs7.jpg",sep=""),width = 22, height = 10)
+ggsave(paste("./output/newphy_figs7.jpg",sep=""),width = 22, height = 10)
 ```
 
 ### Global maps of each predictors
