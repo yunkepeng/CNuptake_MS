@@ -22,7 +22,7 @@ library(tidyselect)
 library(extrafont)
 library(caret)
 library(recipes)
-devtools::load_all("/Users/yunpeng/yunkepeng/rbeni_new/rbeni/") # using beni's latest package.
+devtools::load_all("/Users/yunpeng/yunkepeng/latest_packages/rbeni/") # using beni's latest package.
 #library(rbeni)
 library(raster)
 library(maps)
@@ -1977,6 +1977,21 @@ a16 <- ~{
 #          nrow=5)+white
 
 #ggsave(paste("./output/newphy_figs3.jpg",sep=""), width = 20, height = 20)
+
+plot_grid(a1,a2,a3,a4,a5,
+          a6,a7,a8,a9,white,nrow=2)+white
+
+ggsave(paste("./output/newphy_figs3a.jpg",sep=""), width = 20, height = 20*0.4)
+
+plot_grid(a10,a11,a12,white,white,
+          a13,a14,white,white,white,nrow=2)+white
+
+ggsave(paste("./output/newphy_figs3b.jpg",sep=""), width = 20, height = 20*0.4)
+
+plot_grid(a15,a16,white,white,white,nrow=1)+white
+
+ggsave(paste("./output/newphy_figs3c.jpg",sep=""), width = 20, height = 20*0.2)
+
 ```
 
 # Total estimations and Uncertainty quantification
