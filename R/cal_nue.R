@@ -24,18 +24,18 @@ cal_nue <- function(Tg_pred,PPFD_pred,vpd_pred,fAPAR_pred,age_pred,CNrt_pred,LMA
   
   wnpp_f <- anpp_f - lnpp_f
   
-  leafnc_f <- (summary(n1)$coefficients[1,1]/0.47) + 
-    (summary(n1)$coefficients[2,1]/0.47) * vcmax25_pred/LMA_pred
+  leafnc_f <- (summary(n1)$coefficients[1,1]/leaf_c_forest) + 
+    (summary(n1)$coefficients[2,1]/leaf_c_forest) * vcmax25_pred/LMA_pred
   
   nre_f <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
                          summary(nre_model)$coefficients[2,1] *Tg_pred +
                          summary(nre_model)$coefficients[3,1] * log(vpd_pred)))))
   
   lnf_f <- (1-nre_f)* leafnc_f * lnpp_f
-  wnf_f <- wnpp_f/100
-  #100 is constant wood c/n
-  bnf_f <- bnpp_f/94
-  #94 is constant root c/n
+  wnf_f <- wood_tissue_percentage*wnpp_f/wood_cn_forest
+
+  bnf_f <- bnpp_f/root_cn_forest
+
   nuptake_f <- lnf_f + wnf_f + bnf_f
   
   #grass
@@ -43,16 +43,16 @@ cal_nue <- function(Tg_pred,PPFD_pred,vpd_pred,fAPAR_pred,age_pred,CNrt_pred,LMA
     summary(bp_grass_model)$coefficients[2,1] * log(PPFD_pred) +
     summary(bp_grass_model)$coefficients[3,1] * Tg_pred 
   
-  anpp_g <- npp_g* 0.49
+  anpp_g <- npp_g* anpp_bp_grassland
   bnpp_g <- npp_g-anpp_g
   
-  leafnc_g <- 1/18
+  leafnc_g <- 1/leaf_cn_grassland
   
-  nre_g <- 0.69
+  nre_g <- nre_grassland_constant
   
   lnf_g <- anpp_g*leafnc_g*(1-nre_g)
   
-  bnf_g <- bnpp_g *(1/41)
+  bnf_g <- bnpp_g *(1/root_cn_grassland)
   #41 is constant root c/n
   nuptake_g <- lnf_g + bnf_g
   

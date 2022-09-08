@@ -104,6 +104,36 @@ NPP_all$ndep_a <- log(NPP_all$ndep)
 NPP_forest <- subset(NPP_all,pft=="Forest")
 ```
 
+Constant setting - copied this to cal_nue.R when making change
+```{r}
+
+#set leaf Cmass, wood C/N, root C/N and wood tissue percentage in forest as constant
+#see below code
+leaf_c_forest <- 0.47 
+
+#set wood and root ratio, and wood tissue percentage
+wood_cn_forest <- 319 #(from mean values of Zhang et al. 2019 GCB doi: 10.1111/gcb.14973)
+root_cn_forest <- 94 # see below code
+wood_tissue_percentage <- 1 #0.272
+###
+
+#For 18 and 41 they are fixed values of leaf and root C/N, as derived from "Tian Di Grassland"
+#see line 884 and 885 in preparation code: https://github.com/yunkepeng/nimpl_sofun_inputs_final/blob/main/submission_newphytol/preprocessing/Forest_site_orig.R, 
+#data all derived from "TianDi Grassland", but their BP, ANPP, BNPP data not used in our study
+#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
+#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
+leaf_cn_grassland <- 18
+
+root_cn_grassland <- 41
+
+#nre constant at grassland - see below code - median values of literature Du and Deng
+nre_grassland_constant <- 0.69
+
+#applying null model of anpp/bp - see below code
+anpp_bp_grassland <- 0.50
+
+```
+
 ### Map with sites
 ```{r}
 #check why some grassland BP and ANPP is so high
@@ -133,6 +163,15 @@ stepwise(BP_dataset_ndep,"tnpp_a")[[3]]
 bp_model_ndep <- (lmer(tnpp_a~Tg_a+fAPAR_a+ndep_a+CNrt_a+age_a+(1|site_a),data=BP_dataset_ndep))
 summary(bp_model_ndep)
 r.squaredGLMM(bp_model_ndep)
+
+#latitude check - check if it can replace Tg as a good predictor?
+NPP_forest$lat_abs <- abs(NPP_forest$lat)
+BP_dataset_lat <- na.omit(NPP_forest[,c("tnpp_a","lat_abs","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a")])
+dim(BP_dataset_lat)
+stepwise(BP_dataset_lat,"tnpp_a")[[1]]
+stepwise(BP_dataset_lat,"tnpp_a")[[3]]
+#lat will not help us to improve the model!
+
 ```
 
 ### ANPP
@@ -170,13 +209,13 @@ nrow(BP_dataset)/nrow(BP_dataset2)
 
 vif_bp <- vif((lmer(tnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+vpd_a+(1|site_a),data=BP_dataset2)))
 
-#anpp_tnpp_dataset <- na.omit(NPP_forest[,c("anpp_tnpp_a","obs_age_a","observedfAPAR_a","soilCN_a","Tg_a","PPFD_a","vpd_a","site_a")])
-#dim(anpp_tnpp_dataset)
-#model2 <- stepwise(anpp_tnpp_dataset,"anpp_tnpp_a")
-#model2[[1]]
-#model2[[2]]
-#anpp_tnpp_model <- (lmer(anpp_tnpp_a~soilCN_a+obs_age_a+observedfAPAR_a+(1|site_a),data=anpp_tnpp_dataset))
-#summary(anpp_tnpp_model)
+#check significance at iteration
+summary((lmer(tnpp_a~Tg_a+(1|site_a),data=BP_dataset2)))
+summary((lmer(tnpp_a~Tg_a+fAPAR_a+(1|site_a),data=BP_dataset2)))
+summary((lmer(tnpp_a~Tg_a+fAPAR_a+age_a+(1|site_a),data=BP_dataset2)))
+summary((lmer(tnpp_a~Tg_a+fAPAR_a+age_a+CNrt_a+(1|site_a),data=BP_dataset2)))
+summary((lmer(tnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+(1|site_a),data=BP_dataset2)))
+summary((lmer(tnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+vpd_a+(1|site_a),data=BP_dataset2)))
 
 ```
 
@@ -194,6 +233,16 @@ summary(anpp_tnpp_model)
 r.squaredGLMM(anpp_tnpp_model)
 
 vif_anpp_tnpp <- vif((lmer(anpp_tnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+vpd_a+(1|site_a),data=anpp_tnpp_dataset2)))
+
+#check significance at iteration
+summary(lmer(anpp_tnpp_a~CNrt_a+(1|site_a),data=anpp_tnpp_dataset2))
+summary(lmer(anpp_tnpp_a~CNrt_a+PPFD_a+(1|site_a),data=anpp_tnpp_dataset2))
+summary(lmer(anpp_tnpp_a~CNrt_a+PPFD_a+Tg_a+(1|site_a),data=anpp_tnpp_dataset2))
+summary(lmer(anpp_tnpp_a~CNrt_a+PPFD_a+Tg_a+age_a+(1|site_a),data=anpp_tnpp_dataset2))
+summary(lmer(anpp_tnpp_a~CNrt_a+PPFD_a+Tg_a+age_a+vpd_a+(1|site_a),data=anpp_tnpp_dataset2))
+summary(lmer(anpp_tnpp_a~CNrt_a+PPFD_a+Tg_a+age_a+vpd_a+fAPAR_a+(1|site_a),data=anpp_tnpp_dataset2))
+
+
 ```
 
 ### Leaf NPP
@@ -204,23 +253,15 @@ model3a <- stepwise(anpp_leafnpp_dataset_age,"anpp_leafnpp_a")
 model3a[[1]]
 model3a[[2]]
 model3a[[3]]
-test <- (lmer(anpp_leafnpp_a~age_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-summary(test)
 
-#AIC: 1359
-r.squaredGLMM(test)
-AIC(test)
-BIC(test)
+#check significance at iteration
+summary(lmer(anpp_leafnpp_a~age_a+(1|site_a),data=anpp_leafnpp_dataset_age))
+summary(lmer(anpp_leafnpp_a~age_a+PPFD_a+(1|site_a),data=anpp_leafnpp_dataset_age))
+summary(lmer(anpp_leafnpp_a~age_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
+summary(lmer(anpp_leafnpp_a~age_a+PPFD_a+vpd_a+Tg_a+(1|site_a),data=anpp_leafnpp_dataset_age)) # non-sigificant in age, so age should be removed
+summary(lmer(anpp_leafnpp_a~age_a+PPFD_a+vpd_a+Tg_a+fAPAR_a+(1|site_a),data=anpp_leafnpp_dataset_age))
+summary(lmer(anpp_leafnpp_a~age_a+PPFD_a+vpd_a+Tg_a+fAPAR_a+CNrt_a+(1|site_a),data=anpp_leafnpp_dataset_age))
 
-#AIC: 1351
-r.squaredGLMM(lmer(anpp_leafnpp_a~Tg_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-AIC(lmer(anpp_leafnpp_a~Tg_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-BIC(lmer(anpp_leafnpp_a~Tg_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-
-#AIC: 1343
-r.squaredGLMM(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-AIC(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
-BIC(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)) 
 
 #without age - re-selection - this is best
 anpp_leafnpp_dataset <- na.omit(NPP_forest[,c("anpp_leafnpp_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a")])
@@ -234,6 +275,13 @@ AIC(anpp_leafnpp_model)
 summary(anpp_leafnpp_model)
 r.squaredGLMM(anpp_leafnpp_model)
 vif_anpp_leafnpp <- vif((lmer(anpp_leafnpp_a~Tg_a+fAPAR_a+PPFD_a+CNrt_a+age_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset_age)))
+
+#check significance at iteration
+summary(lmer(anpp_leafnpp_a~fAPAR_a+(1|site_a),data=anpp_leafnpp_dataset)) 
+summary(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+(1|site_a),data=anpp_leafnpp_dataset)) 
+summary(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+(1|site_a),data=anpp_leafnpp_dataset)) 
+summary(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+CNrt_a+(1|site_a),data=anpp_leafnpp_dataset)) 
+summary(lmer(anpp_leafnpp_a~fAPAR_a+PPFD_a+vpd_a+CNrt_a+Tg_a+(1|site_a),data=anpp_leafnpp_dataset)) 
 
 ```
 
@@ -256,6 +304,13 @@ summary(bp_grass_model)
 r.squaredGLMM(bp_grass_model)
 
 vif_bp_grass <- vif((lm(tnpp_a~Tg_a+PPFD_a+vpd_a+CNrt_a+fAPAR_a,data=BP_dataset_grass)))
+
+#check significance at iteration
+summary(lm(tnpp_a~Tg_a,data=BP_dataset_grass))
+summary(lm(tnpp_a~PPFD_a+Tg_a,data=BP_dataset_grass))
+summary(lm(tnpp_a~PPFD_a+Tg_a+vpd_a,data=BP_dataset_grass))
+summary(lm(tnpp_a~PPFD_a+Tg_a+vpd_a+fAPAR_a,data=BP_dataset_grass))
+summary(lm(tnpp_a~PPFD_a+Tg_a+vpd_a+fAPAR_a+CNrt_a,data=BP_dataset_grass))
 
 ```
 
@@ -282,6 +337,8 @@ summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean))) # 0.49 for anpp, so 0.51
 ###2. leaf Nmass basing on a site-species model
 SP_input <- read.csv(file="~/data/leaf_traits/combined_leaf_traits_updated.csv") #new one
 summary(SP_input$C_percent)
+dim(subset(SP_input,C_percent>0))
+dim(unique(subset(SP_input,C_percent>0)[,c("lon","lat")]))
 #median of value of leaf C = 0.47 or 47%
 
 #remove bahar, as repeated to atkin - and filter a few points with vcmax25<0
@@ -382,7 +439,7 @@ summary(SP_input_mean$C_percent,na.rm=TRUE)
 dim(subset(SP_input_mean,C_percent>0))
 ```
 
-### Forest Root C:N
+### Forest Root C:N 
 ```{r warning=FALSE}
 # Root C/N = 94 - as derived from median values of collected samples
 NPP_forest_sitemean <- aggregate(NPP_forest,by=list(NPP_forest$site), FUN=mean, na.rm=TRUE) 
@@ -391,7 +448,7 @@ dim(subset(NPP_forest,CN_root_final>0))
 
 ```
 
-### Forest Wood C:N + grassland leaf and root C/N
+### Forest Wood C:N - not used
 ```{r warning=FALSE}
 # Wood C/N = 100 - as derived median values of TRY database
 wood_cn <- read.csv("~/data/CN_wood/wood_cn.csv")
@@ -399,12 +456,6 @@ wood_cn_sitemean <- aggregate(wood_cn,by=list(wood_cn$lon,wood_cn$lat), FUN=mean
 summary(wood_cn_sitemean$OrigValueStr)
 dim(wood_cn_sitemean)
 
-##2. For Grassland
-#leaf c/n model. median = 18. 
-#root c/n model median = 41.
-#see line 887-888 in Forest_site_org, all derived from "TianDi Grassland", but its BP, ANPP, BNPP data not used in our study
-#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
-#summary(aggregate(subset(dataset6,pft=="Grassland")  ,by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
 ```
 
 ## NRE 
@@ -493,8 +544,8 @@ NPP_forest$pred_lnpp <- NPP_forest$pred_anpp *
 
 NPP_forest$pred_wnpp <- NPP_forest$pred_anpp - NPP_forest$pred_lnpp
 
-NPP_forest$pred_leafnc <- (summary(n1)$coefficients[1,1]/0.47) + 
-  (summary(n1)$coefficients[2,1]/0.47) * NPP_forest$vcmax25/NPP_forest$LMA
+NPP_forest$pred_leafnc <- (summary(n1)$coefficients[1,1]/leaf_c_forest) + 
+  (summary(n1)$coefficients[2,1]/leaf_c_forest) * NPP_forest$vcmax25/NPP_forest$LMA
 
 NPP_forest$pred_lnf <- NPP_forest$pred_lnpp*NPP_forest$pred_leafnc
 NPP_forest$pred_nre <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
@@ -503,8 +554,8 @@ NPP_forest$pred_nre <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
 
 # 100 and 94 are constant, see above for forest wood and root C/N
 
-NPP_forest$pred_wnf <- NPP_forest$pred_wnpp/100
-NPP_forest$pred_bnf <- NPP_forest$pred_bnpp/94
+NPP_forest$pred_wnf <- wood_tissue_percentage*NPP_forest$pred_wnpp/wood_cn_forest
+NPP_forest$pred_bnf <- NPP_forest$pred_bnpp/root_cn_forest
 
 NPP_forest$pred_nuptake <- NPP_forest$pred_lnf*(1-NPP_forest$pred_nre)+NPP_forest$pred_wnf+NPP_forest$pred_bnf
 
@@ -548,22 +599,13 @@ NPP_grassland$grassland_pred_npp <- summary(bp_grass_model)$coefficients[1,1] +
   summary(bp_grass_model)$coefficients[2,1] * NPP_grassland$PPFD_a +
   summary(bp_grass_model)$coefficients[3,1] * NPP_grassland$Tg_a 
 
-# what are these numbers (0.49, 18, 41, ...)
-# 0.49 as derived from anpp/tnpp ratio (fixed in grassland)
-summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean)))
+summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean))) #0.49 as constant scalling
 
-#For 18 and 41 they are fixed values of leaf and root C/N, as derived from "Tian Di Grassland"
-#see line 402-403
-#see line 899 in https://github.com/yunkepeng/nimpl_sofun_inputs_final/blob/main/submission_newphytol/preprocessing/Forest_site_orig.R, 
-#data all derived from "TianDi Grassland", but their BP, ANPP, BNPP data not used in our study
-#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_leaf_final)
-#summary(aggregate(subset(dataset6,pft=="Grassland"),by=list(subset(dataset6,pft=="Grassland")$site), FUN=mean, na.rm=TRUE)$CN_root_final)
-
-NPP_grassland$grassland_pred_anpp <- NPP_grassland$grassland_pred_npp * 0.49
-NPP_grassland$grassland_pred_lnf <- NPP_grassland$grassland_pred_anpp/18
+NPP_grassland$grassland_pred_anpp <- NPP_grassland$grassland_pred_npp * anpp_bp_grassland
+NPP_grassland$grassland_pred_lnf <- NPP_grassland$grassland_pred_anpp/leaf_cn_grassland
 NPP_grassland$grassland_pred_bnpp <- NPP_grassland$grassland_pred_npp - NPP_grassland$grassland_pred_anpp
-NPP_grassland$grassland_pred_bnf <- NPP_grassland$grassland_pred_bnpp/41
-NPP_grassland$grassland_pred_nuptake <- NPP_grassland$grassland_pred_lnf*(1-0.69)+NPP_grassland$grassland_pred_bnf
+NPP_grassland$grassland_pred_bnf <- NPP_grassland$grassland_pred_bnpp/root_cn_grassland
+NPP_grassland$grassland_pred_nuptake <- NPP_grassland$grassland_pred_lnf*(1-nre_grassland_constant)+NPP_grassland$grassland_pred_bnf
 
 p8 <- analyse_modobs2(NPP_grassland,"grassland_pred_npp","TNPP_1", type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
   labs(y = ~paste("Grassland ", BP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Grassland ", BP[pred.], " (gC m"^-2,"yr"^-1,")"))
@@ -665,9 +707,6 @@ summary(grass_percent + forest_percent) # check - their sum = 1, perfect!
 
 ###3. calculate weighted-sum
 #firstly - filter na points - so that all output map has same numbers of NA.
-# all_predictors <- as.data.frame(cbind(Tg$Tg,PPFD$PPFD,vpd$vpd,
-#                                       fAPAR$fAPAR,age$age,
-#                                       CNrt$CNrt,LMA$LMA,vcmax25_df$vcmax25))
 
 all_predictors <- as.data.frame(cbind(Tg$Tg, PPFD$PPFD, vpd$vpd,
                                       fAPAR$fAPAR, age$age,
@@ -679,16 +718,13 @@ all_predictors$available_grid[is.na(all_predictors$available_grid)==FALSE] <- 1
 summary(all_predictors$available_grid)
 available_grid2 <- all_predictors$available_grid
 
-#represent grids when stand-age is especially in NA, but others are fine
+#add coordinates
 names(all_predictors) <- c("Tg","PPFD","vpd","fAPAR","age","CNrt","LMA","vcmax25","available_grid")
 all_predictors$lon <- vcmax25_df$lon
 all_predictors$lat <- vcmax25_df$lat
 summary(all_predictors)
 
-#final calculation - now divide into forest, grassland and pft
 #available_grid2 here was used as a list of data to identify if a grid is available (=1) or any prediction fields shown as NA 
-
-#bp_model,anpp_tnpp_model,anpp_leafnpp_model,bp_grass_model,0.49/0.51,n1,nre_model
 
 ```
 
@@ -728,17 +764,17 @@ lnpp_f <- anpp_f * (1/(1 + exp(-(summary(anpp_leafnpp_model)$coefficients[1,1]+
 
 wnpp_f <- anpp_f - lnpp_f
 
-leafnc_f <- (summary(n1)$coefficients[1,1]/0.47) + 
-  (summary(n1)$coefficients[2,1]/0.47) * vcmax25_df$vcmax25/LMA$LMA
+leafnc_f <- (summary(n1)$coefficients[1,1]/leaf_c_forest) + 
+  (summary(n1)$coefficients[2,1]/leaf_c_forest) * vcmax25_df$vcmax25/LMA$LMA
 
 nre_f <- (1/(1+exp(-(summary(nre_model)$coefficients[1,1] +
                        summary(nre_model)$coefficients[2,1] *Tg$Tg +
                        summary(nre_model)$coefficients[3,1] * log(vpd$vpd)))))
 
 lnf_f <- (1-nre_f)* leafnc_f * lnpp_f
-wnf_f <- wnpp_f/100
+wnf_f <- wood_tissue_percentage*wnpp_f/wood_cn_forest
 #100 is constant wood c/n
-bnf_f <- bnpp_f/94
+bnf_f <- bnpp_f/root_cn_forest
 #94 is constant root c/n
 nuptake_f <- lnf_f + wnf_f + bnf_f
 
@@ -792,22 +828,16 @@ npp_g[npp_g<=0] <- NA
 
 summary(npp_g)
 
-# what are these numbers (0.49, 1/18, 0.69, ...)
-# 0.49, as explained above - are anpp/npp ratio in grassland (see line 552)
-# 18, as explained above - are constant leaf C/N (see line 554)
-# 0.69, as explained in above line - are constant NRE see line 442)
-
-anpp_g <- npp_g* 0.49
+anpp_g <- npp_g* anpp_bp_grassland
 bnpp_g <- npp_g-anpp_g
 
-leafnc_g <- 1/18
+leafnc_g <- 1/leaf_cn_grassland
 
-nre_g <- 0.69
+nre_g <- nre_grassland_constant
 
 lnf_g <- anpp_g*leafnc_g*(1-nre_g)
 
-bnf_g <- bnpp_g *(1/41)
-#41 is constant root c/n
+bnf_g <- bnpp_g *(1/root_cn_grassland)
 nuptake_g <- lnf_g + bnf_g
 
 ```
@@ -1194,10 +1224,10 @@ CLASS_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLASS-CTEM
 #CLM
 #CLM_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLM5.0_S2_fNup_ANN_mean.nc"), varnam = "fNup")) 
 #this product is confusing (1) unit needs /1000 to get gn/m2/year? (2)still many values very high
-CLM_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLM5.0_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
-CLM_GPP$lon[CLM_GPP$lon>180] <- CLM_GPP$lon[CLM_GPP$lon>180]-360
-CLM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLM5.0_S2_npp_ANN_mean.nc"), varnam = "npp"))
-CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
+#CLM_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLM5.0_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
+#CLM_GPP$lon[CLM_GPP$lon>180] <- CLM_GPP$lon[CLM_GPP$lon>180]-360
+#CLM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLM5.0_S2_npp_ANN_mean.nc"), varnam = "npp"))
+#CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 
 #ISAM
 #(given in kgC m-2 month-1 - they might not need to multiply with 12
@@ -1286,7 +1316,7 @@ SDGVM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_n
 
 ```{r warning=FALSE}
 #all_maps
-not_used <- list(CLASS_GPP,CLASS_NPP,CLM_GPP,CLM_NPP,JSBACH_fNup,JSBACH_GPP,JSBACH_NPP)
+#not_used <- list(CLASS_GPP,CLASS_NPP,CLM_GPP,CLM_NPP,JSBACH_fNup,JSBACH_GPP,JSBACH_NPP)
 
 raster_CLASS_npp <- raster("~/data/trendy/v8/CLASS-CTEM_S2_npp_ANN_mean.nc")
 raster_CLM_npp <- raster("~/data/trendy/v8/CLM5.0_S2_npp_ANN_mean.nc")
@@ -1323,7 +1353,7 @@ for (i in c(1:length(allmaps))){
   sitemean_final[,i+2] <- sp_sites_new[,1]
 }
 
-#CLM has some problem here for coordinates - need convert # CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
+#CLM has some problem here for coordinates (ranging from 0 to 360 in lon) - need convert # CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 sitemean2 <- sitemean
 sitemean2$lon[sitemean2$lon<0] <- sitemean2$lon[sitemean2$lon<0]+360
 sp_sites2 <- SpatialPoints(sitemean2) # only select lon and lat
@@ -1726,7 +1756,7 @@ ggsave(paste("./output/newphy_fig4.jpg",sep=""), width = 20, height = 15)
 
 ```
 
-## Nuptake or NUE vs. all predictors
+## NUE vs. all predictors
 ```{r, warning=FALSE}
 #nue and nuptake relation
 #also, our simulations
@@ -1768,7 +1798,7 @@ ggsave(paste("./output/newphy_figs8.jpg",sep=""), width = 20, height = 10)
 
 ```
 
-## Nuptake or NUE vs. all predictors
+## Nuptake vs. all predictors
 
 ```{r}
 # n uptake
@@ -2080,7 +2110,7 @@ summary(uncertainty_wnpp/wnpp_f)
 
 #leaf n/c - ALREADY checked that inputted vcmax25_df + LMA calculated from (1) fortran and (2) R for predicting leaf n/c, could output the same prediction for leaf n/c Please note! using a.vcmax25.nc rather than annualvcmax25.nc. See difference in: https://www.notion.so/computationales/annualvcmax25-vs-a-vcmax25-282bddd63bba4d7b9cfcc75805b45964
 n1 <- lmer(nmass_a~vcmax25_lma_a + (1|sitename_a)+(1|species_a))
-mod_leafnc_uncertainty <-summary(n1)$sigma/0.47
+mod_leafnc_uncertainty <-summary(n1)$sigma/leaf_c_forest
 summary(mod_leafnc_uncertainty)
 
 ```
@@ -2106,8 +2136,8 @@ summary(uncertainty_lnf/lnf_f)
 
 ### Wood N flux
 ```{r}
-#now, uncertainty of wood n uptake flux (assuming wood c/n is a constant = 100)
-uncertainty_wnf <- uncertainty_wnpp/100
+#now, uncertainty of wood n uptake flux
+uncertainty_wnf <- wood_tissue_percentage*uncertainty_wnpp/wood_cn_forest
 summary(uncertainty_wnf/wnf_f)
 
 ```
@@ -2115,7 +2145,7 @@ summary(uncertainty_wnf/wnf_f)
 ### Root N flux
 ```{r}
 #root N flux = uncertainty of bnpp * root N/C
-uncertainty_bnf <- uncertainty_bnpp/94
+uncertainty_bnf <- uncertainty_bnpp/root_cn_forest
 
 ```
 
@@ -2134,10 +2164,10 @@ uncertainty_nuptake <- sqrt(uncertainty_lnf^2 + uncertainty_wnf^2 + uncertainty_
 
 #grassland
 uncertainty_npp_grassland
-uncertainty_anpp_grassland <- uncertainty_npp_grassland*0.49
-uncertainty_bnpp_grassland <- uncertainty_npp_grassland*0.51
-uncertainty_lnf_grassland <- uncertainty_npp_grassland*0.49*(1-0.69)/18
-uncertainty_bnf_grassland <- uncertainty_npp_grassland*0.51/41
+uncertainty_anpp_grassland <- uncertainty_npp_grassland*anpp_bp_grassland
+uncertainty_bnpp_grassland <- uncertainty_npp_grassland*(1-anpp_bp_grassland)
+uncertainty_lnf_grassland <- uncertainty_npp_grassland*anpp_bp_grassland*(1-nre_grassland_constant)/leaf_cn_grassland
+uncertainty_bnf_grassland <- uncertainty_npp_grassland*(1-anpp_bp_grassland)/root_cn_grassland
 uncertainty_nuptake_grassland <- sqrt(uncertainty_lnf_grassland^2 + uncertainty_bnf_grassland^2)
 ```
 
@@ -2174,17 +2204,17 @@ sqrt(sum(uncertainty_nuptake*(forest_percent *conversion)*available_grid2,na.rm=
 
 #final nue - calculated from final results
 #forest nue:
-(55.74/0.79) 
+(55.74/0.61) 
 #grassland nue:
-(16.37/0.34)
+(16.36/0.34)
 #total nue:
-(72.06/1.13) 
+76.01 # as calculated above
 #forest nue uncertainty:
-(55.74/0.79) * sqrt( (10.62/55.74)^2 +(0.23/0.79)^2)
+(55.74/0.61)  * sqrt( (10.62/55.74)^2 +(0.22/0.61)^2)
 #grassland nue uncertainty:
-(16.32/0.34) * sqrt( (9.65/16.32)^2 +(0.15/0.34)^2)
+(16.36/0.34) * sqrt( (9.72/16.36)^2 +(0.15/0.34)^2)
 #pft
-(72.06/1.13) * sqrt( (14.35/72.06)^2 +(0.27/1.13)^2)
+(72.10/0.95) * sqrt( (14.40/72.10)^2 +(0.26/0.95)^2)
 ```
 
 ### BP partial relationship vs. observations
