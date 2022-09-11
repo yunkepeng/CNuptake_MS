@@ -72,6 +72,15 @@ Input complete dataset and do some re-processing
 #input NPP file
 NPP_all <- read.csv("~/data/NPP_Yunke/NPP_Nmin_dataset_with_predictors.csv")
 
+#check some percentage
+dim(subset(NPP_all, is.na(Nmin)==T & pft =="Forest"))
+dim(subset(NPP_all, is.na(Nmin)==T & pft =="Grassland"))
+
+dim(subset(NPP_all, is.na(Nmin)==T & lat<=23.5 & lat>=-23.5)) 
+dim(subset(NPP_all, is.na(Nmin)==T & lat<=50 & lat>23.5))
+dim(subset(NPP_all, is.na(Nmin)==T & lat>= -50 & lat< -23.5))
+dim(subset(NPP_all, is.na(Nmin)==T ))
+
 #summarise number of sites
 dim(subset(NPP_all,is.na(Nmin)==TRUE) %>% group_by(site)  %>% summarise(mean = mean(lon)))
 
@@ -325,7 +334,7 @@ model_g2 <- stepwise_lm(anpp_tnpp_dataset_grass,"anpp_tnpp_a")
 model_g2[[1]]
 summary(lm(anpp_tnpp_a~Tg_a,data=anpp_tnpp_dataset_grass))
 #non-significant! so alternatively using constant ratio
-summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean))) # 0.49 for anpp, so 0.51 for bnpp
+summary((lm(anpp_a~-1+tnpp_a,data=grassland_sitemean))) # 0.50
 
 ```
 
