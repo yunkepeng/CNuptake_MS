@@ -8,7 +8,6 @@ date: '2022-07-11'
 ```{r setup, include=FALSE}
 library(MLmetrics)
 library(vhs) ##remotes::install_github("cj-holmes/vhs")
-library(tidyverse) 
 library(ncmeta)
 library(viridis)
 library(ggthemes)
