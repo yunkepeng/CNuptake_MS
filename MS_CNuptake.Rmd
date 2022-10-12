@@ -1016,15 +1016,18 @@ a13 <- gg$ggmap +
 
 a14 <- gg$gglegend+ white
 
-plot_grid(a3,a4,a5,a6,a7,a8,
-          a9,a10,a11,a12,a13,a14,
-          nrow=2,
-          rel_widths = c(3/12, 1/12,3/12,1/12,3/12,1/12),
-          labels = c('(a)',' ','(b)',' ','(c)',' ',
-                     '(d)',' ','(e)',' ','(f)',' '))
+plot_grid(a3,a4,a5,a6,
+          a7,a8,a9,a10,
+          a11,a12,a13,a14,
+          nrow=3,
+          rel_widths = c(4.5/12, 1.5/12,4.5/12,1.5/12),
+          labels = c('(a)',' ','(b)',' ',
+                     '(c)',' ','(d)',' ',
+                     '(e)',' ','(f)',' '))
 
 #this is for showing points
-ggsave(paste("./output/newphy_figs5.jpg",sep=""),width = 20, height = 10*(2/3))
+ggsave(paste("./output/newphy_figs5.jpg",sep=""),width = 16, height = 12)
+
 ```
 
 ## Figure 3 without points
@@ -1091,13 +1094,16 @@ a13 <- gg$ggmap +
 
 a14 <- gg$gglegend+ white
 
-plot_grid(a3,a4,a5,a6,a7,a8,
-          a9,a10,a11,a12,a13,a14,
-          nrow=2,
-          rel_widths = c(3/12, 1/12,3/12,1/12,3/12,1/12),
-          labels = c('(a)',' ','(b)',' ','(c)',' ',
-                     '(d)',' ','(e)',' ','(f)',' '))
-ggsave(paste("./output/newphy_fig2.jpg",sep=""),width = 20, height = 10*(2/3))
+plot_grid(a3,a4,a5,a6,
+          a7,a8,a9,a10,
+          a11,a12,a13,a14,
+          nrow=3,
+          rel_widths = c(4.5/12, 1.5/12,4.5/12,1.5/12),
+          labels = c('(a)',' ','(b)',' ',
+                     '(c)',' ','(d)',' ',
+                     '(e)',' ','(f)',' '))
+ggsave(paste("./output/newphy_fig2.jpg",sep=""),width = 16, height = 12)
+
 ```
 
 # Effect on Nup
