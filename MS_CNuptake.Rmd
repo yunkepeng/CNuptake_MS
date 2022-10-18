@@ -1122,7 +1122,7 @@ ggsave(paste("./output/fig2.jpg",sep=""),width = 16, height = 12)
 ```{r}
 #work on effect of each factor on NUE
 #now, work on NUE
-nue_final <- all_maps$NUE # by default
+nue_final <- available_grid2*npp_f/nuptake_f # by default
 
 nue_standard <- cal_nue(Tg$Tg,PPFD$PPFD,vpd$vpd,fAPAR$fAPAR,
                         age$age,CNrt$CNrt,LMA$LMA,vcmax25_df$vcmax25)
@@ -1336,11 +1336,7 @@ ORCHICNP_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDE
 #SDGVM
 SDGVM_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
 SDGVM_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/SDGVM_S2_npp_ANN_mean.nc"), varnam = "npp"))
-```
 
-## BP
-
-```{r warning=FALSE}
 #all_maps
 #not_used <- list(CLASS_GPP,CLASS_NPP,CLM_GPP,CLM_NPP,JSBACH_fNup,JSBACH_GPP,JSBACH_NPP)
 
@@ -1360,6 +1356,12 @@ obj_name <- c("CABLE_GPP","CABLE_NPP","ISAM_fNup","ISAM_gpp","ISAM_npp","ISBA_GP
 #calculate nue 
 summary( ISAM_npp$npp/ISAM_fNup$fNup)
 summary(na.omit(ORCHICNP_NPP$npp/ORCHICNP_fNup$fNup))
+
+```
+
+## BP
+
+```{r warning=FALSE}
 
 #aggregate based on lon and lat firstly
 sitemean <- unique(NPP_forest[,c("lon","lat")])
@@ -1407,16 +1409,17 @@ sitemean_final$JULES_NPP[sitemean_final$JULES_NPP==0] <- NA
 sitemean_final$LPX_NPP[sitemean_final$LPX_NPP==0] <- NA
 sitemean_final$LPX_fNup[sitemean_final$LPX_fNup==0] <- NA
 
-#first, our model - using predicted data
-BP_dataset3 <- na.omit(NPP_forest[,c("pred_npp","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a","lon","lat")])
-BP_dataset3<- aggregate(BP_dataset3,by=list(BP_dataset3$lon,BP_dataset3$lat), FUN=mean, na.rm=TRUE)%>% dplyr::select(-c(Group.1,Group.2,lon,lat,site_a))
-
 ```
 
 ### Fit models
 
 Fit models with environmental factors
 ```{r, warning=FALSE}
+
+#first, our model - using predicted data
+NPP_forest2 <- subset(NPP_forest,TNPP_1>0)
+BP_dataset3 <- na.omit(NPP_forest2[,c("pred_npp","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_a","vpd_a","site_a","lon","lat")])
+BP_dataset3<- aggregate(BP_dataset3,by=list(BP_dataset3$lon,BP_dataset3$lat), FUN=mean, na.rm=TRUE)%>% dplyr::select(-c(Group.1,Group.2,lon,lat,site_a))
 
 bp_model_ours <- (lm(pred_npp~Tg_a+PPFD_a+vpd_a,data=BP_dataset3))
 summary(bp_model_ours)
@@ -1656,9 +1659,9 @@ final1d <- ggplot()+xlim(-0.8,1) +geom_line(data = subset(fits_vpd1,plt=="Measur
 
 ```{r, warning=FALSE}
 #nue model for TRENDY
-#nuptake figure
-#N minerlization
-NUE_test <- NPP_all
+NUE_test1 <- subset(NPP_forest,TNPP_1>0)
+NUE_test2 <- subset(NPP_forest,is.na(Nmin)==FALSE)
+NUE_test <- rbind(NUE_test1,NUE_test2)
 
 sitemean3 <- unique(NUE_test[,c("lon","lat")])
 sp_sites3 <- SpatialPoints(sitemean3) # only select lon and lat
@@ -1735,11 +1738,11 @@ nue6e <- visreg(mod_nue4,"Tg_a",type="contrast")
 nue8e <- visreg(mod_nue4,"PPFD_a",type="contrast")
 
 #also, our simulations
-NPP_grassland_remove <- NPP_grassland
-forest_NUE <- NPP_forest[,c("lon","lat","pred_nuptake","pred_npp","Tg_a","PPFD_a","vpd_a")]
-grassland_NUE <- NPP_grassland_remove[,c("lon","lat","grassland_pred_nuptake","grassland_pred_npp","Tg_a","PPFD_a","vpd_a")]
-names(grassland_NUE) <- c("lon","lat","pred_nuptake","pred_npp","Tg_a","PPFD_a","vpd_a")
-nue_allplots <- as.data.frame(rbind(forest_NUE,grassland_NUE))
+NUE_test1 <- subset(NPP_forest,TNPP_1>0)
+NUE_test2 <- subset(NPP_forest,is.na(Nmin)==FALSE)
+NUE_test <- as.data.frame(rbind(NUE_test1,NUE_test2))
+nue_allplots <- NUE_test[,c("lon","lat","pred_nuptake","pred_npp","Tg_a","PPFD_a","vpd_a")]
+
 nue_allplots$nue <-nue_allplots$pred_npp/nue_allplots$pred_nuptake
 nue_allplots <- na.omit(nue_allplots[,c("nue","Tg_a","vpd_a","PPFD_a","lon","lat")])
 nue_allplots <- aggregate(nue_allplots,by=list(nue_allplots$lon,nue_allplots$lat), FUN=mean, na.rm=TRUE)
