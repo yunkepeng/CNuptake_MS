@@ -798,6 +798,16 @@ bnf_f <- bnpp_f/root_cn_forest
 #94 is constant root c/n
 nuptake_f <- lnf_f + wnf_f + bnf_f
 
+#produce forest NUE vs. forest BP-leaf/BP
+nue_f_output <- npp_f/nuptake_f
+lnpp_allocation_f_output <- lnpp_f/anpp_f
+data_output <- as.data.frame(cbind(nue_f_output,lnpp_allocation_f_output))
+ggplot(data=data_output, aes(x=lnpp_allocation_f_output, y=nue_f_output))+
+  geom_point()+
+  geom_smooth(method="lm")+xlab("Leaf-BP/ABP")+ylab("NUE")+
+  theme(axis.text=element_text(size=10),axis.title=element_text(size=15))
+ggsave(paste("./output/figs8.jpg",sep=""),width = 5, height = 5)
+
 #LMG test in forest
 df_all <- (as.data.frame(cbind(nuptake_f, npp_f, all_predictors)))
 df_all$nue <- df_all$npp_f/df_all$nuptake_f
@@ -1313,22 +1323,6 @@ ORCHIDEE_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDE
 ORCHIDEE_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDEE_S2_npp_ANN_mean.nc"), varnam = "npp"))
 
 #ORCHIDEE-CNP
-nc_flip_lat <- function(nc){
-  
-  nc$lat <- rev(nc$lat)
-  
-  # nlat <- length(nc$lat)
-  # nc$vars[[1]] <- nc$vars[[1]][,nlat:1]
-  
-  arr_flip_lat <- function(arr){
-    nlat <- dim(arr)[2]
-    arr <- arr[,nlat:1]
-    return(arr)
-  }
-  nc$vars <- purrr::map(nc$vars[1], ~arr_flip_lat(.))
-  
-  return(nc)
-}
 ORCHICNP_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDEE-CNP_S2_fNup_ANN_mean.nc"), varnam = "fNup"))
 ORCHICNP_GPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDEE-CNP_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
 ORCHICNP_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ORCHIDEE-CNP_S2_npp_ANN_mean.nc"), varnam = "npp"))
@@ -1380,6 +1374,7 @@ for (i in c(1:length(allmaps))){
     right_join(sitemean, by = c("lon", "lat"))
   sitemean_final[,i+2] <- sp_sites_new[,1]
 }
+#for some maps that may not be directly extract from above, using an alternative method (checked that both method should have the same results)
 
 #CLM has some problem here for coordinates (ranging from 0 to 360 in lon) - need convert # CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 sitemean2 <- sitemean
