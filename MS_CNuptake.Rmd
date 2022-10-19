@@ -1742,11 +1742,11 @@ nue_allplots$nue <-nue_allplots$pred_npp/nue_allplots$pred_nuptake
 nue_allplots <- na.omit(nue_allplots[,c("nue","Tg_a","vpd_a","PPFD_a","lon","lat")])
 nue_allplots <- aggregate(nue_allplots,by=list(nue_allplots$lon,nue_allplots$lat), FUN=mean, na.rm=TRUE)
 
-mod_nue3 <- (lm(nue~vpd_a+Tg_a+PPFD_a,data=nue_allplots))
-summary(mod_nue3)
-nue4c <- visreg(mod_nue3,"vpd_a",type="contrast")
-nue6c <- visreg(mod_nue3,"Tg_a",type="contrast")
-nue8c <- visreg(mod_nue3,"PPFD_a",type="contrast")
+mod_nue5 <- (lm(nue~vpd_a+Tg_a+PPFD_a,data=nue_allplots))
+summary(mod_nue5)
+nue4c <- visreg(mod_nue5,"vpd_a",type="contrast")
+nue6c <- visreg(mod_nue5,"Tg_a",type="contrast")
+nue8c <- visreg(mod_nue5,"PPFD_a",type="contrast")
 
 fits_vpd <- dplyr::bind_rows(mutate(nue4c$fit, plt = "Measurement"),mutate(nue4b$fit, plt = "ORCHICNP"),mutate(nue4a$fit, plt = "ISAM"),mutate(nue4d$fit, plt = "JSBACH"),mutate(nue4e$fit, plt = "LPX"))
 fits_Tg <- dplyr::bind_rows(mutate(nue6c$fit, plt = "Measurement"),mutate(nue6b$fit, plt = "ORCHICNP"),mutate(nue6a$fit, plt = "ISAM"),mutate(nue6d$fit, plt = "JSBACH"),mutate(nue6e$fit, plt = "LPX"))
