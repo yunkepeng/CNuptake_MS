@@ -64,7 +64,7 @@ larger_plot_title<-theme(plot.title = element_text(size=15))
 Input complete dataset and do some re-processing 
 
 (some metric info such as number of sites and species was shown as 'metric_info', that will be inputted in Method text)
-(metric info was primarily using individual numbers in Fig.1 - validation figure)
+(metric info was primarily using individual numbers in Fig.2 - validation figure)
 
 (the partial relationship figure Fig.1 was in ~/yunkepeng/nimpl_sofun_inputs_final/submission_newphytol/submission/plot_all_models.R since here cannot output figures due to too large margins)
 
