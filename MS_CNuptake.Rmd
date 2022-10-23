@@ -112,6 +112,7 @@ NPP_all$obs_age_a <- log(NPP_all$age)
 NPP_all$age_a <- log(NPP_all$mapped_age)
 NPP_all$Tg_a <- NPP_all$Tg
 NPP_all$PPFD_a <- log(NPP_all$PPFD)
+NPP_all$PPFD_total_a <- log(NPP_all$PPFD_total)
 NPP_all$vpd_a <- log(NPP_all$vpd)
 NPP_all$fAPAR_a <- NPP_all$fAPAR
 NPP_all$CNrt_a <- log(NPP_all$CNrt)
@@ -166,6 +167,15 @@ points(outliers$lon,outliers$lat, col="green", pch=16,cex=2)
 
 ### BP
 ```{r}
+#ppfd_total check - BP using total_ppfd (D added but ppfd_total removed)
+BP_dataset_ppfd_total <- na.omit(NPP_forest[,c("tnpp_a","age_a","fAPAR_a","CNrt_a","Tg_a","PPFD_total_a","vpd_a","site_a")])
+stepwise(BP_dataset_ppfd_total,"tnpp_a")[[1]]
+stepwise(BP_dataset_ppfd_total,"tnpp_a")[[3]]
+bp_best <- (lmer(tnpp_a~Tg_a+fAPAR_a+age_a+CNrt_a+vpd_a+(1|site_a),data=BP_dataset_ppfd_total))
+summary(bp_best)
+bp_less_best <- (lmer(tnpp_a~Tg_a+fAPAR_a+age_a+CNrt_a+vpd_a+PPFD_total_a+(1|site_a),data=BP_dataset_ppfd_total))
+summary(bp_less_best)
+
 BP_dataset <- na.omit(NPP_forest[,c("tnpp_a","obs_age_a","observedfAPAR_a","soilCN_a","Tg_a","PPFD_a","vpd_a","site_a")])
 #model1 <- stepwise(BP_dataset,"tnpp_a")
 #model1[[1]]
