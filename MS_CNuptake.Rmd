@@ -66,6 +66,8 @@ Input complete dataset and do some re-processing
 (some metric info such as number of sites and species was shown as 'metric_info', that will be inputted in Method text)
 (metric info was primarily using individual numbers in Fig.1 - validation figure)
 
+(the partial relationship figure Fig.1 was in ~/yunkepeng/nimpl_sofun_inputs_final/submission_newphytol/submission/plot_all_models.R since here cannot output figures due to too large margins)
+
 ```{r}
 #remove alpha throughout all analyses because 
 #(1) D and alpha shows contridictory results for NUE 
@@ -663,7 +665,7 @@ plot_grid(p1,p2,p5,
           p6,p12,p7, 
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)','(j)','(k)','(l)'),
           ncol=3,label_x = 0.9,label_y=0.92,label_size = 25)+white
-ggsave(paste("./output/fig1.jpg",sep=""),width = 24, height = 25)
+ggsave(paste("./output/fig2.jpg",sep=""),width = 24, height = 25)
 
 ```
 
@@ -806,7 +808,7 @@ ggplot(data=data_output, aes(x=lnpp_allocation_f_output, y=nue_f_output))+
   geom_point()+
   geom_smooth(method="lm")+xlab("Leaf-BP/ABP")+ylab("NUE")+
   theme(axis.text=element_text(size=10),axis.title=element_text(size=15))
-ggsave(paste("./output/figs8.jpg",sep=""),width = 5, height = 5)
+ggsave(paste("./output/figs6.jpg",sep=""),width = 5, height = 5)
 
 #LMG test in forest
 df_all <- (as.data.frame(cbind(nuptake_f, npp_f, all_predictors)))
@@ -1124,7 +1126,7 @@ plot_grid(a3,a4,a5,a6,
           labels = c('(a)',' ','(b)',' ',
                      '(c)',' ','(d)',' ',
                      '(e)',' ','(f)',' '))
-ggsave(paste("./output/fig2.jpg",sep=""),width = 16, height = 12)
+ggsave(paste("./output/fig3.jpg",sep=""),width = 16, height = 12)
 
 ```
 
@@ -1196,11 +1198,11 @@ aa8 <- ggplot(data = nue_all) + stat_summary(mapping = aes(y = name, x = LMA),fu
 
 plot_grid(a1,a2,a3,a4,a5,a6,a7,a8,a9,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("./output/fig3.jpg",sep=""),width = 22, height = 10)
+ggsave(paste("./output/fig3_notused.jpg",sep=""),width = 22, height = 10)
 
 plot_grid(aa1,aa2,aa3,aa4,aa5,aa6,aa7,aa8,
           labels = c('(a)','(b)','(c)','(d)','(e)','(f)','(g)','(h)','(i)'),label_size = 15)+white
-ggsave(paste("./output/figs7.jpg",sep=""),width = 22, height = 10)
+ggsave(paste("./output/figs6_notused.jpg",sep=""),width = 22, height = 10)
 ```
 
 ### Global maps of each predictors
@@ -1689,6 +1691,7 @@ sitemean3_final <- as.data.frame(cbind(sitemean3_final,new_added3))
 
 sitemean3_final$ORCHICNP_fNup[sitemean3_final$ORCHICNP_fNup==0] <- NA
 sitemean3_final$ISAM_npp[sitemean3_final$ISAM_npp==0] <- NA
+sitemean3_final$ISAM_fNup[sitemean3_final$ISAM_fNup==0] <- NA
 sitemean3_final$LPX_NPP[sitemean3_final$LPX_NPP==0] <- NA
 sitemean3_final$LPX_fNup[sitemean3_final$LPX_fNup==0] <- NA
 
@@ -1818,7 +1821,7 @@ plot_grid(final1_nue1,final1_nue2,final1_nue3,final1_nue4,
           final1_nue5,final1_nue6,final1_nue7,final1_nue8,
           nrow=2,label_x = 0.8, label_y = 0.8)+white
 
-ggsave(paste("./output/figs8.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/figs7_notused.jpg",sep=""), width = 20, height = 10)
 
 ```
 
@@ -2314,5 +2317,5 @@ plot_grid(a1,a2,a3,a4,a5,
           a6,a7,a8,a9,white,
           nrow=2)+white
 
-ggsave(paste("./output/figs6.jpg",sep=""), width = 20, height = 10)
+ggsave(paste("./output/figs5.jpg",sep=""), width = 20, height = 10)
 ```
