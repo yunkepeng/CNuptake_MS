@@ -1278,13 +1278,13 @@ CLASS_NPP <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/CLASS-CTEM
 #CLM_NPP$lon[CLM_NPP$lon>180] <- CLM_NPP$lon[CLM_NPP$lon>180]-360
 
 #ISAM
-#(given in kgC m-2 month-1 - they might not need to multiply with 12
+#basing on below cdo code
 #cdo seltimestep,127/156 ISAM_S2_fNup.nc a1.nc
 #cdo -O timmean a1.nc ISAM_S2_fNup_ANN_mean.nc
 
 ISAM_fNup <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_fNup_ANN_mean.nc"), varnam = "fNup"))
 
-# The values multiply here is for unit from kg/m2/month to g/m2/yr (1000 for kg to g, and 31556952 from 1/second to 1/year)
+# The values multiply here is for unit from kg/m2/s to g/m2/yr (1000 for kg to g, and 31556952 from 1/second to 1/year)
 ISAM_fNup$fNup<- ISAM_fNup$fNup*1000*31556952
 
 ISAM_gpp <- as.data.frame(nc_to_df(read_nc_onefile("~/data/trendy/v8/ISAM_S2_gpp_ANN_mean.nc"), varnam = "gpp"))
