@@ -141,7 +141,7 @@ analyse_modobs2 <- function(
       labs(x = mod, y = obs)
     
     if (plot_subtitle) gg <- gg + labs(subtitle = subtitle)
-    if (plot_linmod) gg <- gg + geom_smooth(method='lm', color="red", size=0.5, se=FALSE)
+    if (plot_linmod) gg <- gg + geom_smooth(method='lm', color="red", size=2, se=FALSE)
     
     if (!identical(filnam, NA)) {
       ggsave(filnam, width=5, height=5)

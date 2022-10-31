@@ -535,13 +535,13 @@ length(NRE_df$NRE)
 #vif_bp,vif_anpp_tnpp,vif_anpp_leafnpp,vif_bp_grass
 
 b1 <- as.ggplot(~barplot(vif_bp, main = "VIF of Forest BP model", horiz = TRUE, col = "steelblue",
-                         names.arg = c("Tg", "fAPAR", "ln PPFD", "ln soil C:N", "ln age", "ln vpd")))
+                         names.arg = c("Tg", "fAPAR", "ln gPPFD", "ln soil C:N", "ln age", "ln vpd")))
 b2 <- as.ggplot(~barplot(vif_anpp_tnpp, main = "VIF of Forest ABP/BP model", horiz = TRUE, col = "steelblue",
-                         names.arg = c("Tg", "fAPAR", "ln PPFD", "ln soil C:N", "ln age", "ln vpd")))
+                         names.arg = c("Tg", "fAPAR", "ln gPPFD", "ln soil C:N", "ln age", "ln vpd")))
 b3 <- as.ggplot(~barplot(vif_anpp_leafnpp, main = "VIF of Forest leaf-BP/ABP model", horiz = TRUE, col = "steelblue",
-                         names.arg = c("Tg", "fAPAR", "ln PPFD", "ln soil C:N", "ln age", "ln vpd")))
+                         names.arg = c("Tg", "fAPAR", "ln gPPFD", "ln soil C:N", "ln age", "ln vpd")))
 b4 <- as.ggplot(~barplot(vif_bp_grass, main = "VIF of Grassland BP model", horiz = TRUE, col = "steelblue",
-                         names.arg = c("Tg", "ln PPFD", "ln vpd", "ln soil C:N", "fAPAR")))
+                         names.arg = c("Tg", "ln gPPFD", "ln vpd", "ln soil C:N", "fAPAR")))
 plot_grid(b1,b2,b3,b4,
           labels = c('(a)','(b)','(c)','(d)'),
           ncol=2,label_x = 0.9,label_y=0.92)+white
@@ -1229,7 +1229,7 @@ gg <- plot_map3(na.omit(fAPAR[,c("lon","lat","fAPAR")]),varnam = "fAPAR",latmin 
 d5 <- gg$ggmap +labs(title = "fAPAR")+theme_grey(base_size = 15)+ white;d6 <- gg$gglegend+ white
 
 gg <- plot_map3(na.omit(PPFD[,c("lon","lat","PPFD")]),varnam = "PPFD",latmin = -65, latmax = 85,combine=FALSE,breaks = seq(100,800,100))
-d7 <- gg$ggmap +labs(title = "PPFD")+theme_grey(base_size = 15)+ white;d8 <- gg$gglegend + labs(title =~paste(mu, "mol m"^-2,"s"^-1))+ white
+d7 <- gg$ggmap +labs(title = "gPPFD")+theme_grey(base_size = 15)+ white;d8 <- gg$gglegend + labs(title =~paste(mu, "mol m"^-2,"s"^-1))+ white
 
 gg <- plot_map3(na.omit(Tg[,c("lon","lat","Tg")]),varnam = "Tg",latmin = -65, latmax = 85,combine=FALSE)
 d9 <- gg$ggmap +labs(title =~paste(T[g]))+theme_grey(base_size = 15)+ white;d10 <- gg$gglegend + labs(title =~paste("\u00B0C"))+ white
@@ -1531,7 +1531,7 @@ fits_PPFD <- dplyr::bind_rows(mutate(bp1b$fit, plt = "Measurement"),mutate(p1a$f
 fits_vpd <- dplyr::bind_rows(mutate(bp1c$fit, plt = "Measurement"),mutate(v1a$fit, plt = "CABLE"),mutate(v2a$fit, plt = "ISAM"),mutate(v3a$fit, plt = "ISBA"),mutate(v4a$fit, plt = "JULES"),mutate(v5a$fit, plt = "LPJ"),mutate(v6a$fit, plt = "ORCHIDEE"),mutate(v7a$fit, plt = "ORCHICNP"),mutate(v8a$fit, plt = "SDGVM"),mutate(v9a$fit, plt = "CLASS"),mutate(v10a$fit, plt = "CLM"),mutate(v11a$fit, plt = "JSBACH"),mutate(v12a$fit, plt = "LPX"))
 
 final1 <- ggplot() +xlim(8,30)+geom_line(data = subset(fits_tg,plt=="Measurement"), aes(Tg_a, visregFit, group=plt, color=plt),size=4)+geom_line(data = fits_tg, aes(Tg_a, visregFit, group=plt, color=plt),size=1) +theme_classic()+theme(text = element_text(size=20),legend.position="none")+  geom_ribbon(data = bp1a$fit,aes(Tg_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+labs(y = ~paste(BP, " (gC m"^-2,"yr"^-1,")"))+xlab("Tg (°C)")
-final2 <- ggplot()+xlim(5.5,6.3)+geom_line(data = subset(fits_PPFD,plt=="Measurement"), aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + ylab(" ")+theme_classic()+theme(text = element_text(size=20),legend.position="none")+geom_ribbon(data = bp1b$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+ scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab(~paste("ln PPFD (", mu, "mol m"^-2,"s"^-1, ")"))
+final2 <- ggplot()+xlim(5.5,6.3)+geom_line(data = subset(fits_PPFD,plt=="Measurement"), aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + ylab(" ")+theme_classic()+theme(text = element_text(size=20),legend.position="none")+geom_ribbon(data = bp1b$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+ scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")"))
 final3 <- ggplot()+xlim(-0.8,1) +geom_line(data = subset(fits_vpd,plt=="Measurement"), aes(vpd_a, visregFit, group=plt, color=plt),size=4)+geom_line(data = fits_vpd, aes(vpd_a, visregFit, group=plt, color=plt),size=1) + ylab(" ") +theme_classic()+theme(text = element_text(size=20),legend.position="none")+ geom_ribbon(data = bp1c$fit,aes(vpd_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab("ln D (kPa)")
 
 #show legend
@@ -1651,7 +1651,7 @@ final1b <- ggplot()+xlim(8,30) + geom_line(data = subset(fits_tg,plt=="Measureme
 
 final1c <- ggplot()+xlim(5.5,6.3) +geom_line(data = subset(fits_ppfd,plt=="Measurement"),aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_ppfd, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + 
   geom_ribbon(data=nn1c$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+
-  xlab(~paste("ln PPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
+  xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
   theme_classic()+theme(text = element_text(size=20),legend.position="none")+
   scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 
@@ -1780,7 +1780,7 @@ final1_nue6 <- ggplot() +xlim(8,30)+geom_line(data = nue6c$fit, aes(Tg_a, visreg
  
 final1_nue8 <- ggplot()+xlim(5.5,6.3) +geom_line(data = nue8c$fit, aes(PPFD_a, visregFit),size=4) +
   geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) +
-  xlab(~paste("ln PPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
+  xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
   geom_ribbon(data=nue8c$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+
   theme_classic()+theme(text = element_text(size=20),legend.position="none")+scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 
@@ -2283,7 +2283,7 @@ a1 <- ~{
 
 a2 <- ~{
   p1a <- visreg(bp_model,"PPFD_a",type="contrast")
-  plot(p1a,ylab="Forest BP",xlab="ln PPFD",
+  plot(p1a,ylab="Forest BP",xlab="ln gPPFD",
        cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)}
 
 a3 <- ~{
@@ -2308,7 +2308,7 @@ a6 <- ~{
 
 a7 <- ~{
   p1a <- visreg(anpp_tnpp_model,"PPFD_a",type="contrast")
-  plot(p1a,ylab="logit ABP/BP",xlab="ln PPFD",line=list(col="white",lwd=0.01,lty=9), band=FALSE,
+  plot(p1a,ylab="logit ABP/BP",xlab="ln gPPFD",line=list(col="white",lwd=0.01,lty=9), band=FALSE,
        cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)}
 
 a8 <- ~{
