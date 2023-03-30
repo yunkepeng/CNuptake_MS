@@ -2092,7 +2092,7 @@ uncertainty_npp <- summary(bp_model)$sigma
 
 uncertainty_npp_grassland <- summary(bp_grass_model)$sigma 
 
-# for all logit function model (mod_tnpp, mod_anpp, mod_lnpp, nre_model): a = 1/(1+exp(-b)), where a is the ratio (e.g. npp/gpp) and b is the regression (e.g. mod =tnpp)
+# for all logit function model (mod_tnpp, mod_anpp, mod_lnpp, nre_model): a = 1/(1+exp(-b)), where a is the ratio and b is the regression 
 #we calculate uncertainty of b firstly, based on each regression
 #now we need to calculate deriative a / deriative b, based on a = 1/(1+exp(-b)). After calculation it is: exp(-b) / ( (1 + exp(-b)) ^2)
 
