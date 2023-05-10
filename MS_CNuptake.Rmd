@@ -73,8 +73,10 @@ Input complete dataset and do some re-processing
 #(1) D and alpha shows contridictory results for NUE 
 #(2) D and alpha repeated in model selection
 
-#input NPP file
-NPP_all <- read.csv("~/data/NPP_Yunke/NPP_Nmin_dataset_with_predictors.csv")
+#input NPP and nmin file and combine
+npp_dataset <- read.csv("~/data/NPP_Yunke/NPP_dataset.csv")
+nmin_dataset <- read.csv("~/data/Nmin_Finzi/Nmin_dataset.csv")
+NPP_all <- dplyr::bind_rows(npp_dataset, nmin_dataset) 
 
 #metric_info check some percentage
 dim(subset(NPP_all, is.na(Nmin)==T & pft =="Forest"))
