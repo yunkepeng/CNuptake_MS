@@ -13,7 +13,7 @@ stepwise_lm <- function(df_input,target_var){
   for (var in preds){
     forml <- paste( 'lm(', target, '~', var, ', data = df)')
     fit_lin <- eval(parse(text = forml)) 
-    rsq <- r.squaredGLMM(fit_lin)[1]
+    rsq <- summary(fit_lin)$adj.r.squared
     r_list <- c(r_list,rsq)
   }
   
@@ -52,7 +52,7 @@ stepwise_lm <- function(df_input,target_var){
       fit_lin <- eval(parse(text = forml))
       linmod_candidates[[ i ]] <- fit_lin
       # obtain multiple r2 at each selection, and find the best one at the end
-      rsq <- r.squaredGLMM(fit_lin)[1]
+      rsq <- summary(fit_lin)$adj.r.squared
       rsq_candidates[i] <- rsq
     }
     pred_max <- preds_candidate[ which.max(rsq_candidates) ]
@@ -64,12 +64,12 @@ stepwise_lm <- function(df_input,target_var){
     
     list_bic[[ a ]] <- BIC(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained, collapse = '+'),  ', data = df)'))))
     
-    list_R[[ a ]] <- r.squaredGLMM(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained, collapse = '+'),  ', data = df)'))))[1]
+    list_R[[ a ]] <- summary(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained, collapse = '+'),  ', data = df)'))))$adj.r.squared
     preds_candidate <- preds_candidate[-which(preds_candidate == pred_max)]
   }
   
   
-  R_null <- r.squaredGLMM(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained[1], collapse = '+'),  ', data = df)'))))[1]
+  R_null <- summary(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained[1], collapse = '+'),  ', data = df)'))))$adj.r.squared
   AIC_null <- AIC(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained[1], collapse = '+'),  ', data = df)'))))
   BIC_null <- BIC(eval(parse(text = paste( 'lm(', target, '~', paste(preds_retained[1], collapse = '+'),  ', data = df)'))))
   variable_null <- preds_retained[1]

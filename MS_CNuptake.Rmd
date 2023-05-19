@@ -1046,6 +1046,8 @@ gg <- plot_map3(na.omit(all_maps[,c("lon","lat","NUE")]),
 
 total_value<- round(sum(all_maps[,"npp_pft"]*conversion,na.rm=TRUE)/sum(all_maps[,"nuptake_pft"]*conversion,na.rm=TRUE),2)
 
+total_value
+
 a13 <- gg$ggmap +
   labs(title = paste("NUE: ", total_value, " ", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
@@ -2247,7 +2249,7 @@ sqrt(sum(uncertainty_nuptake*(forest_percent *conversion)*available_grid2,na.rm=
 #grassland nue:
 (16.36/0.34)
 #total nue:
-76.01 # as calculated above
+76.00 # as shown in figure
 #forest nue uncertainty:
 (55.74/0.61)  * sqrt( (10.62/55.74)^2 +(0.22/0.61)^2)
 #grassland nue uncertainty:
