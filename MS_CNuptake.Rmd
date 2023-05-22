@@ -599,25 +599,25 @@ NPP_forest$wnf_obs_final  <- NPP_forest$NPP.wood/NPP_forest$CN_wood_final
 #aggregate
 
 p1 <- analyse_modobs2(NPP_forest, "pred_npp","TNPP_1",type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest ", BP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest ", BP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest ", BP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest ", BP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p2 <- analyse_modobs2(NPP_forest,"pred_anpp", "ANPP_2",type = "points",relative=TRUE)$gg+ larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest ", ABP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest ", ABP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest ", ABP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest ", ABP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p3 <- analyse_modobs2(NPP_forest,"pred_lnpp","NPP.foliage", type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest leaf ", BP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest leaf ", BP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest leaf ", BP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest leaf ", BP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p4 <- analyse_modobs2(NPP_forest, "pred_wnpp","NPP.wood",type = "points",relative=TRUE)$gg+ larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest wood ", BP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest wood ", BP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest wood ", BP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest wood ", BP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p5 <- analyse_modobs2(NPP_forest,"pred_bnpp","BNPP_1", type = "points",relative=TRUE)$gg+ larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest ", BBP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest ", BBP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest ", BBP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest ", BBP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p6 <- analyse_modobs2(NPP_forest,"pred_lnf","lnf_obs_final", type = "points",relative=TRUE)$gg+ larger_size+coord_obs_pred()+
-  labs(y = ~paste("Forest leaf N ", flux[obs.], " (gN m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest leaf N ", flux[pred.], " (gN m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Forest leaf N ", flux[obs.], " (g N m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest leaf N ", flux[pred.], " (g N m"^-2," yr"^-1,")"))
 
 p7 <- analyse_modobs2(NPP_forest,"pred_nuptake","Nmin", type = "points",relative=TRUE)$gg+ larger_size+coord_obs_pred()+
-  labs(y = ~paste("Net ", minerlization[obs.], " (gN m"^-2,"yr"^-1,")")) +labs(x = ~paste("Forest N ", uptake[pred.], " (gN m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Net ", minerlization[obs.], " (g N m"^-2," yr"^-1,")")) +labs(x = ~paste("Forest N ", uptake[pred.], " (g N m"^-2," yr"^-1,")"))
 
 #metric_info: site and individual numbers of N uptake
 #check how many samples = 225, sites = 84
@@ -642,13 +642,13 @@ NPP_grassland$grassland_pred_bnf <- NPP_grassland$grassland_pred_bnpp/root_cn_gr
 NPP_grassland$grassland_pred_nuptake <- NPP_grassland$grassland_pred_lnf*(1-nre_grassland_constant)+NPP_grassland$grassland_pred_bnf
 
 p8 <- analyse_modobs2(NPP_grassland,"grassland_pred_npp","TNPP_1", type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
-  labs(y = ~paste("Grassland ", BP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Grassland ", BP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Grassland ", BP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Grassland ", BP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p9 <- analyse_modobs2(NPP_grassland,"grassland_pred_anpp","ANPP_2", type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
-  labs(y = ~paste("Grassland ", ABP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Grassland ", ABP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Grassland ", ABP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Grassland ", ABP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 p10 <- analyse_modobs2(NPP_grassland,"grassland_pred_bnpp","BNPP_1", type = "points",relative=TRUE)$gg + larger_size+coord_obs_pred()+
-  labs(y = ~paste("Grassland ", BBP[obs.], " (gC m"^-2,"yr"^-1,")")) +labs(x = ~paste("Grassland ", BBP[pred.], " (gC m"^-2,"yr"^-1,")"))
+  labs(y = ~paste("Grassland ", BBP[obs.], " (g C m"^-2," yr"^-1,")")) +labs(x = ~paste("Grassland ", BBP[pred.], " (g C m"^-2," yr"^-1,")"))
 
 white <- theme(plot.background=element_rect(fill="white", color="white"))
 
@@ -970,7 +970,7 @@ a3 <- gg$ggmap +
   labs(title = paste("BP:", total_value, "PgC/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
 
-a4 <- gg$gglegend+labs(title = ~paste("gC m"^-2,"yr"^-1))+ white+larger_plot_title
+a4 <- gg$gglegend+labs(title = ~paste("g C m"^-2," yr"^-1))+ white+larger_plot_title
 
 #3.anpp
 anpp_f1 <- (NPP_forest %>% filter(ANPP_2>0) %>% filter(pred_anpp>0))[,c("lon","lat")]
@@ -986,7 +986,7 @@ a5 <- gg$ggmap +
   labs(title = paste("ABP:", total_value, "PgC/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
 
-a6 <- gg$gglegend+labs(title = ~paste("gC m"^-2,"yr"^-1))+ white+larger_plot_title
+a6 <- gg$gglegend+labs(title = ~paste("g C m"^-2," yr"^-1))+ white+larger_plot_title
 
 #4. leaf c/n
 SP_input <- read.csv(file="~/data/leaf_traits/combined_leaf_traits_updated.csv") #new one 
@@ -1036,7 +1036,7 @@ a11 <- gg$ggmap +
   labs(title = paste("N uptake: ", total_value, "TgN/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
 
-a12 <- gg$gglegend+labs(title = ~paste("gN m"^-2,"yr"^-1))+ white+larger_plot_title
+a12 <- gg$gglegend+labs(title = ~paste("g N m"^-2," yr"^-1))+ white+larger_plot_title
 
 #NUE
 all_maps$NUE <- all_maps$npp_pft/all_maps$nuptake_pft
@@ -1077,7 +1077,7 @@ gg <- plot_map3(na.omit(all_maps[,c("lon","lat","npp_pft")]),
 a3 <- gg$ggmap +
   labs(title = paste("BP:", total_value, "PgC/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
-a4 <- gg$gglegend+labs(title = ~paste("gC m"^-2,"yr"^-1))+ white+larger_plot_title
+a4 <- gg$gglegend+labs(title = ~paste("g C m"^-2," yr"^-1))+ white+larger_plot_title
 
 #3.anpp
 total_value <- round(sum(all_maps[,"anpp_pft"]*conversion,na.rm=TRUE),2)
@@ -1086,7 +1086,7 @@ gg <- plot_map3(na.omit(all_maps[,c("lon","lat","anpp_pft")]),
 a5 <- gg$ggmap +
   labs(title = paste("ABP:", total_value, "PgC/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
-a6 <- gg$gglegend+labs(title = ~paste("gC m"^-2,"yr"^-1))+ white+larger_plot_title
+a6 <- gg$gglegend+labs(title = ~paste("g C m"^-2," yr"^-1))+ white+larger_plot_title
 
 #4. leaf c/n
 gg <- plot_map3(na.omit(all_maps[,c("lon","lat","leafcn_pft")]),
@@ -1116,7 +1116,7 @@ a11 <- gg$ggmap +
   labs(title = paste("N uptake: ", total_value, "TgN/yr", sep=" " ))+
   theme_grey(base_size = 12)+ white+larger_plot_title
 
-a12 <- gg$gglegend+labs(title = ~paste("gN m"^-2,"yr"^-1))+ white+larger_plot_title
+a12 <- gg$gglegend+labs(title = ~paste("g N m"^-2," yr"^-1))+ white+larger_plot_title
 
 #NUE
 all_maps$NUE <- all_maps$npp_pft/all_maps$nuptake_pft
@@ -1534,8 +1534,8 @@ fits_PPFD <- dplyr::bind_rows(mutate(bp1b$fit, plt = "Measurement"),mutate(p1a$f
 
 fits_vpd <- dplyr::bind_rows(mutate(bp1c$fit, plt = "Measurement"),mutate(v1a$fit, plt = "CABLE"),mutate(v2a$fit, plt = "ISAM"),mutate(v3a$fit, plt = "ISBA"),mutate(v4a$fit, plt = "JULES"),mutate(v5a$fit, plt = "LPJ"),mutate(v6a$fit, plt = "ORCHIDEE"),mutate(v7a$fit, plt = "ORCHICNP"),mutate(v8a$fit, plt = "SDGVM"),mutate(v9a$fit, plt = "CLASS"),mutate(v10a$fit, plt = "CLM"),mutate(v11a$fit, plt = "JSBACH"),mutate(v12a$fit, plt = "LPX"))
 
-final1 <- ggplot() +xlim(8,30)+geom_line(data = subset(fits_tg,plt=="Measurement"), aes(Tg_a, visregFit, group=plt, color=plt),size=4)+geom_line(data = fits_tg, aes(Tg_a, visregFit, group=plt, color=plt),size=1) +theme_classic()+theme(text = element_text(size=20),legend.position="none")+  geom_ribbon(data = bp1a$fit,aes(Tg_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+labs(y = ~paste(BP, " (gC m"^-2,"yr"^-1,")"))+xlab("Tg (°C)")
-final2 <- ggplot()+xlim(5.5,6.3)+geom_line(data = subset(fits_PPFD,plt=="Measurement"), aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + ylab(" ")+theme_classic()+theme(text = element_text(size=20),legend.position="none")+geom_ribbon(data = bp1b$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+ scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")"))
+final1 <- ggplot() +xlim(8,30)+geom_line(data = subset(fits_tg,plt=="Measurement"), aes(Tg_a, visregFit, group=plt, color=plt),size=4)+geom_line(data = fits_tg, aes(Tg_a, visregFit, group=plt, color=plt),size=1) +theme_classic()+theme(text = element_text(size=20),legend.position="none")+  geom_ribbon(data = bp1a$fit,aes(Tg_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+labs(y = ~paste(BP, " (g C m"^-2," yr"^-1,")"))+xlab("Tg (°C)")
+final2 <- ggplot()+xlim(5.5,6.3)+geom_line(data = subset(fits_PPFD,plt=="Measurement"), aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + ylab(" ")+theme_classic()+theme(text = element_text(size=20),legend.position="none")+geom_ribbon(data = bp1b$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+ scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab(~paste("ln gPPFD (", mu, "mol m"^-2," s"^-1, ")"))
 final3 <- ggplot()+xlim(-0.8,1) +geom_line(data = subset(fits_vpd,plt=="Measurement"), aes(vpd_a, visregFit, group=plt, color=plt),size=4)+geom_line(data = fits_vpd, aes(vpd_a, visregFit, group=plt, color=plt),size=1) + ylab(" ") +theme_classic()+theme(text = element_text(size=20),legend.position="none")+ geom_ribbon(data = bp1c$fit,aes(vpd_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+scale_colour_manual(values=c(Measurement="black",CABLE="pink",ISAM="red",ISBA="#339999",JULES="#663399",LPJ="#0066CC",ORCHIDEE="#FF9933",ORCHICNP="cyan",SDGVM="yellow",CLASS="brown",CLM="darkgoldenrod",JSBACH="burlywood1",LPX="darkgreen"))+xlab("ln D (kPa)")
 
 #show legend
@@ -1649,13 +1649,13 @@ fits_vpd1 <- dplyr::bind_rows(mutate(nn1d$fit, plt = "Measurement"),
 
 final1b <- ggplot()+xlim(8,30) + geom_line(data = subset(fits_tg,plt=="Measurement"),aes(Tg_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_tg, aes(Tg_a, visregFit, group=plt, color=plt),size=1) + 
   geom_ribbon(data=nn1b$fit,aes(Tg_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+
-  xlab("Tg (°C)") +labs(y = ~paste("N uptake", " (gN m"^-2,"yr"^-1,")")) +
+  xlab("Tg (°C)") +labs(y = ~paste("N uptake", " (g N m"^-2," yr"^-1,")")) +
   theme_classic()+theme(text = element_text(size=20),legend.position="none")+
   scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 
 final1c <- ggplot()+xlim(5.5,6.3) +geom_line(data = subset(fits_ppfd,plt=="Measurement"),aes(PPFD_a, visregFit, group=plt, color=plt),size=4) +geom_line(data = fits_ppfd, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) + 
   geom_ribbon(data=nn1c$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+
-  xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
+  xlab(~paste("ln gPPFD (", mu, "mol m"^-2," s"^-1, ")")) + ylab(" ")+
   theme_classic()+theme(text = element_text(size=20),legend.position="none")+
   scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 
@@ -1784,7 +1784,7 @@ final1_nue6 <- ggplot() +xlim(8,30)+geom_line(data = nue6c$fit, aes(Tg_a, visreg
  
 final1_nue8 <- ggplot()+xlim(5.5,6.3) +geom_line(data = nue8c$fit, aes(PPFD_a, visregFit),size=4) +
   geom_line(data = fits_PPFD, aes(PPFD_a, visregFit, group=plt, color=plt),size=1) +
-  xlab(~paste("ln gPPFD (", mu, "mol m"^-2,"s"^-1, ")")) + ylab(" ")+
+  xlab(~paste("ln gPPFD (", mu, "mol m"^-2," s"^-1, ")")) + ylab(" ")+
   geom_ribbon(data=nue8c$fit,aes(PPFD_a, ymin=visregLwr, ymax=visregUpr),fill="gray",alpha=0.5)+
   theme_classic()+theme(text = element_text(size=20),legend.position="none")+scale_colour_manual(values=c(Measurement="black",ISAM="red",ORCHICNP="cyan",JSBACH="burlywood1",LPX="darkgreen"))
 
