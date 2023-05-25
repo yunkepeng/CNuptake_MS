@@ -890,6 +890,15 @@ nuptake_g <- lnf_g + bnf_g
 ```{r}
 #combine into 2 pfts
 npp_pft <- available_grid2* (npp_f*forest_percent +npp_g*grass_percent)
+#define an available available_grid3 - that includes NA information of npp_f and npp_g:
+#for npp_f and npp_g, we transfer those negative values (<0) to NA. we need to know and specify all these NA grids, and use it through calculations
+#this is important, as it will make balance for weighted-sum calculations (i.e. all components in forest and grassland have the same NA grids).
+
+available_grid3 <- npp_pft
+available_grid3[is.na(available_grid3)==F] <- 1
+#combine available_grid3 and available_grid2
+available_grid2 <- available_grid3*available_grid2
+
 npp_forest <- available_grid2* (npp_f*forest_percent)
 npp_grass <- available_grid2* (npp_g*grass_percent)
 
@@ -2245,17 +2254,17 @@ sqrt(sum(uncertainty_nuptake*(forest_percent *conversion)*available_grid2,na.rm=
 
 #final nue - calculated from final results
 #forest nue:
-(55.74/0.61) 
+(55.70/0.61) 
 #grassland nue:
-(16.36/0.34)
+(16.40/0.34)
 #total nue:
 76.00 # as shown in figure
 #forest nue uncertainty:
-(55.74/0.61)  * sqrt( (10.62/55.74)^2 +(0.22/0.61)^2)
+(55.70/0.61)  * sqrt( (10.58/55.70)^2 +(0.22/0.61)^2)
 #grassland nue uncertainty:
-(16.36/0.34) * sqrt( (9.72/16.36)^2 +(0.15/0.34)^2)
+(16.40/0.34) * sqrt( (9.42/16.40)^2 +(0.14/0.34)^2)
 #pft
-(72.10/0.95) * sqrt( (14.40/72.10)^2 +(0.26/0.95)^2)
+(72.10/0.95) * sqrt( (14.17/72.10)^2 +(0.26/0.95)^2)
 ```
 
 ### BP partial relationship vs. observations
