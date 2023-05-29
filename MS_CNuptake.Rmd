@@ -7,7 +7,6 @@ date: '2022-07-11'
 # Setup 
 ```{r setup, include=FALSE}
 library(MLmetrics)
-library(vhs) ##remotes::install_github("cj-holmes/vhs")
 library(ncmeta)
 library(viridis)
 library(ggthemes)
@@ -21,7 +20,6 @@ library(tidyselect)
 library(extrafont)
 library(caret)
 library(recipes)
-devtools::load_all("/Users/yunpeng/yunkepeng/latest_packages/rbeni/") # using beni's latest package.
 library(raster)
 library(maps)
 library(rworldmap)
@@ -48,11 +46,13 @@ source("R/data_transfer.R")
 
 #other functions
 source("R/cal_nue.R")
+source("R/plot_map3.R")
 source("R/analyse_modobs2.R")
 source("R/stepwise.R")
 source("R/stepwise_lm.R")
 source("R/calc_area.R")
-
+source("R/nc_to_df.R")
+source("R/read_nc_onefile.R")
 
 # reset validation metrics info
 white <- theme(plot.background=element_rect(fill="white", color="white"))
