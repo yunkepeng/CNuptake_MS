@@ -15,7 +15,7 @@ npp_path <- "data/NPP_Yunke/NPP_dataset.csv" # also saved in Geco-Archive: "/dat
 leaf_traits_path <- "data/leaf_traits/combined_leaf_traits_updated.csv" # also saved in Geco-Archive: "/data/archive/leaf_traits/combined_leaf_traits_updated.csv"
 nmin_path <- "data/Nmin_Finzi/Nmin_dataset.csv" 
 woodcn_path <- "data/CN_wood/wood_cn.csv"
-NRE_path <- "data/NRE_various/NRE_dataset.csv"
+NRE_path <- "data/NRE_various/NRE_dataset.csv" # also saved in Geco-Archive: "/data/archive/NRE_various/NRE_dataset.csv"
 landcover_path <- "data/landcover/modis_landcover_halfdeg_2010_FILLED.nc"
 fland_path <- "data/fland/global.fland.nc"
 trendy_path <- "data/trendy/v8/"

@@ -1,0 +1,1 @@
+###### The data was  each grid's land cover percentage (0.5 deg)
