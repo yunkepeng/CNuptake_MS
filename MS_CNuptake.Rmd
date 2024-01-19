@@ -53,6 +53,8 @@ source("R/stepwise_lm.R")
 source("R/calc_area.R")
 source("R/nc_to_df.R")
 source("R/read_nc_onefile.R")
+source("R/df_to_grid.R")
+source("R/write_nc2.R")
 
 # reset validation metrics info
 white <- theme(plot.background=element_rect(fill="white", color="white"))
@@ -1054,6 +1056,57 @@ plot_grid(a3,a4,a5,a6,
 
 #this is for showing points
 ggsave(paste("./output/figs3.jpg",sep=""),width = 16, height = 12)
+
+#output all nc files
+# all_maps: npp_pft,anpp_pft,leafcn_pft,nre_pft,nuptake_pft,NUE
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","npp_pft")],varnam = "npp_pft", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "npp_pft"
+varams = "npp_pft"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "npp_pft",long_name = "net primary production",units = "gC/m2/yr",path = "./data/map_output/npp.nc")
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","anpp_pft")],varnam = "anpp_pft", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "anpp_pft"
+varams = "anpp_pft"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "anpp_pft",long_name = "aboveground net primary production",units = "gC/m2/yr",path = "./data/map_output/anpp.nc")
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","leafcn_pft")],varnam = "leafcn_pft", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "leafcn_pft"
+varams = "leafcn_pft"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "leafcn_pft",long_name = "leaf c/n",units = "/",path = "./data/map_output/leafcn.nc")
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","nre_pft")],varnam = "nre_pft", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "nre_pft"
+varams = "nre_pft"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "nre_pft",long_name = "nitrogen resorption efficiency",units = "/",path = "./data/map_output/nre.nc")
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","nuptake_pft")],varnam = "nuptake_pft", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "nuptake_pft"
+varams = "nuptake_pft"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "nuptake_pft",long_name = "nitrogen uptake",units = "gN/m2/yr",path = "./data/map_output/nuptake.nc")
+
+new_nc <- list(df_to_grid(all_maps[,c("lon","lat","NUE")],varnam = "NUE", lonnam = "lon", latnam = "lat"))
+names(new_nc) <- "NUE"
+varams = "NUE"
+
+test <- list(lon,lat,new_nc,varams)
+names(test) <- c("lon","lat","vars","varams")
+write_nc2(test,varnams = "NUE",long_name = "nitrogen use efficiency",units = "/",path = "./data/map_output/NUE.nc")
 
 ```
 
